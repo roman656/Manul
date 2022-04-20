@@ -1,48 +1,50 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
 using Manul.Exceptions;
+using Manul.Services;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using Serilog;
 
 namespace Manul
 {
     public class Program
     {
-        private static Config _config;
-        private DiscordSocketClient _client;
+        public static Config Config;
 
         public static void Main(string[] args)
         {
             try
             {
+                LoggingService.PrepareLogger();
                 CheckFile(Config.Filename);
-                _config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(Config.Filename));
+                Config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(Config.Filename));
                 new Program().MainAsync().GetAwaiter().GetResult();
             }
             catch (Exception exception)
             {
-                Console.WriteLine("Error: " + exception.Message);
+                Log.Fatal("{Message}",exception.Message);
             }
         }
 
         private async Task MainAsync()
         {
-            _client = new DiscordSocketClient();
-            _client.Log += Log;
+            var services = new ServiceCollection();
+            ConfigureServices(services);
+
+            var provider = services.BuildServiceProvider();
+            provider.GetRequiredService<LoggingService>();
+            provider.GetRequiredService<CommandHandler>();
             
-            await _client.LoginAsync(TokenType.Bot, _config.Token);
-            await _client.StartAsync();
-            await Task.Delay(-1);
+            await provider.GetRequiredService<StartupService>().StartAsync();
+            await Task.Delay(Timeout.Infinite);
         }
-        
-        private static Task Log(LogMessage message)
-        {
-            Console.WriteLine(message);
-            return Task.CompletedTask;
-        }
-        
+
         private static void CheckFile(in string filename)
         {
             var fileInfo = new FileInfo(filename);
@@ -56,6 +58,18 @@ namespace Manul
             {
                 throw new EmptyFileException($"File {filename} is empty.");
             }
+        }
+        
+        private static void ConfigureServices(IServiceCollection services)
+        {
+            services.AddSingleton(new DiscordSocketClient(new DiscordSocketConfig
+                            { LogLevel = LogSeverity.Verbose, MessageCacheSize = Config.MessageCacheSize } ))
+                    .AddSingleton(new CommandService(new CommandServiceConfig
+                            { LogLevel = LogSeverity.Verbose, DefaultRunMode = RunMode.Async } ))
+                    .AddSingleton<CommandHandler>()
+                    .AddSingleton<StartupService>()
+                    .AddSingleton<LoggingService>()
+                    .AddSingleton<Random>();
         }
     }
 }
