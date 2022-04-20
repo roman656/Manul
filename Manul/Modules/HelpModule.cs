@@ -11,8 +11,7 @@ namespace Manul.Modules
 
         public HelpModule(CommandService service) => _service = service;
 
-        [Command("help")]
-        [Alias("h", "справка")]
+        [Command("help"), Alias("h", "справка")]
         [Summary("Показывает справку.")]
         public async Task HelpAsync()
         {
@@ -46,8 +45,7 @@ namespace Manul.Modules
             await ReplyAsync(string.Empty, false, builder.Build());
         }
 
-        [Command("help")]
-        [Alias("h", "справка")]
+        [Command("help"), Alias("h", "справка")]
         [Summary("Показывает справку по конкретной команде.")]
         public async Task HelpAsync(string command)
         {
