@@ -31,6 +31,16 @@ namespace Manul.Services
             if (message.HasStringPrefix(Config.Prefix, ref argumentPosition)
                     || message.HasMentionPrefix(_client.CurrentUser, ref argumentPosition))
             {
+                if (message.HasMentionPrefix(_client.CurrentUser, ref argumentPosition))
+                {
+                    var content = message.Content;
+
+                    while (char.IsWhiteSpace(content[argumentPosition]))
+                    {
+                        argumentPosition++;
+                    }
+                }
+                
                 var result = await _commandService.ExecuteAsync(context, argumentPosition, _provider);
 
                 if (!result.IsSuccess)
