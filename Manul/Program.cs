@@ -68,8 +68,7 @@ namespace Manul
                             { LogLevel = LogSeverity.Verbose, DefaultRunMode = RunMode.Async } ))
                     .AddSingleton<CommandHandler>()
                     .AddSingleton<StartupService>()
-                    .AddSingleton<LoggingService>()
-                    .AddSingleton<Random>();
+                    .AddSingleton<LoggingService>();
         }
     }
 }

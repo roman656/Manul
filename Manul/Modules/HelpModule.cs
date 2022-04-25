@@ -47,7 +47,7 @@ namespace Manul.Modules
 
         [Command("help"), Alias("h", "справка")]
         [Summary("Показывает справку по конкретной команде.")]
-        public async Task HelpAsync(string command)
+        public async Task HelpAsync([Summary("команда")] string command)
         {
             var result = _service.Search(Context, command);
 
@@ -66,11 +66,11 @@ namespace Manul.Modules
             foreach (var match in result.Commands)
             {
                 var commandInfo = match.Command;
-
+                
                 builder.AddField(x =>
                 {
                     x.Name = string.Join(", ", commandInfo.Aliases);
-                    x.Value = (commandInfo.Parameters.Count > 0 ? $"Аргументы: {string.Join(", ", commandInfo.Parameters.Select(p => p.Name))}\n" : "")
+                    x.Value = (commandInfo.Parameters.Count > 0 ? $"Аргументы: **{string.Join(", ", commandInfo.Parameters.Select(p => p.Summary))}**\n" : "")
                               + $"Подсказка: {commandInfo.Summary}";
                     x.IsInline = false;
                 });
