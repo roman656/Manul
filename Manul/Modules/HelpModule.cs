@@ -11,11 +11,11 @@ namespace Manul.Modules
 
         public HelpModule(CommandService service) => _service = service;
 
-        [Command("help"), Alias("h", "справка")]
-        [Summary("Показывает справку.")]
+        [Command("help"), Alias("h", "?", "справка")]
+        [Summary("показываю справку")]
         public async Task HelpAsync()
         {
-            var builder = new EmbedBuilder { Color = Config.EmbedColor, Description = "Справка" };
+            var builder = new EmbedBuilder { Color = Config.EmbedColor, Title = "Справка :cat::books:" };
             
             foreach (var module in _service.Modules)
             {
@@ -27,7 +27,7 @@ namespace Manul.Modules
                     
                     if (result.IsSuccess)
                     {
-                        description += $"{Config.Prefix}{commandInfo.Aliases[0]}{(commandInfo.Parameters.Count > 0 ? " ..." : "")}\n";
+                        description += $"*{Config.Prefix}{commandInfo.Aliases[0]}{(commandInfo.Parameters.Count > 0 ? " (c аргументами)" : "")}*\n";
                     }
                 }
                 
@@ -45,24 +45,22 @@ namespace Manul.Modules
             await ReplyAsync(string.Empty, false, builder.Build());
         }
 
-        [Command("help"), Alias("h", "справка")]
-        [Summary("Показывает справку по конкретной команде.")]
-        public async Task HelpAsync([Summary("команда")] string command)
+        [Command("help"), Alias("h", "?", "справка")]
+        [Summary("показываю справку по конкретной команде")]
+        public async Task HelpAsync([Summary("название команды")] string command)
         {
             var result = _service.Search(Context, command);
+            var builder = new EmbedBuilder { Color = Config.EmbedColor, Title = "Справка по команде :cat::books:" };
 
             if (!result.IsSuccess)
             {
-                await ReplyAsync($"А я не знаю команд, похожих на **{command}**");
+                builder.Description = $"**А я не знаю команд, похожих на** ***{(string.IsNullOrEmpty(command) || string.IsNullOrWhiteSpace(command) ? "ты :clown:" : command)}***";
+                await ReplyAsync(string.Empty, false, builder.Build());
                 return;
             }
-            
-            var builder = new EmbedBuilder
-            {
-                Color = Config.EmbedColor,
-                Description = $"Вот команды, похожие на **{command}**"
-            };
 
+            builder.Description = $"**Вот команды, похожие на** ***{command}***";
+            
             foreach (var match in result.Commands)
             {
                 var commandInfo = match.Command;
@@ -70,8 +68,8 @@ namespace Manul.Modules
                 builder.AddField(x =>
                 {
                     x.Name = string.Join(", ", commandInfo.Aliases);
-                    x.Value = (commandInfo.Parameters.Count > 0 ? $"Аргументы: **{string.Join(", ", commandInfo.Parameters.Select(p => p.Summary))}**\n" : "")
-                              + $"Подсказка: {commandInfo.Summary}";
+                    x.Value = (commandInfo.Parameters.Count > 0 ? $"Аргумент{(commandInfo.Parameters.Count > 1 ? "ы" : "")}: *{string.Join(", ", commandInfo.Parameters.Select(p => p.Summary))}*\n" : "")
+                              + $"Подсказка: *{commandInfo.Summary}*";
                     x.IsInline = false;
                 });
             }

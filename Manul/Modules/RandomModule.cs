@@ -16,7 +16,7 @@ namespace Manul.Modules
         private readonly Random _random = new ();
 
         [Command("rand"), Alias("r", "random", "р", "рандом", "ранд", "кубики", "кубик", "кости")]
-        [Summary("Кидаю за тебя кубики и смотрю, что выпадет)")]
+        [Summary("кидаю за тебя кубики и смотрю, что выпадет)")]
         public async Task RandAsync([Summary("нижняя граница диапазона")] string minValue = "", 
                 [Summary("верхняя граница диапазона")] string maxValue = "",
                 [Summary("количество чисел")] string amount = "")
