@@ -23,7 +23,7 @@ namespace Manul.Modules
             else
             {
                 var answers = input.Trim().ToLower().Split(_separators, StringSplitOptions.RemoveEmptyEntries);
-                builder.Description = $"**Я думаю {answers[_random.Next(0, answers.Length)]}**";
+                builder.Description = $"**{(Context.User.Username == "PoorMercymain" ? "Саныч, я" : "Я")} думаю {answers[_random.Next(0, answers.Length)]}**";
             }
             
             await Context.Message.ReplyAsync(string.Empty, false, builder.Build());
