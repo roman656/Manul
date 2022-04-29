@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,6 +17,7 @@ namespace Manul
     public class Program
     {
         public static Config Config;
+        public static readonly List<VotingData> VotingData = new ();
 
         public static void Main(string[] args)
         {
