@@ -9,7 +9,7 @@ namespace Manul.Modules
         private const int DefaultMessagesAmount = 10;
         private const int МахMessagesAmount = 20;
         
-        [Command("clean"), Alias("napalm", "зачистка", "очистка", "чистка", "напалм", "напалмовый", "напалмовый залп")]
+        [Command("clean"), Alias("napalm", "зачистка", "очистка", "чистка", "огонь", "напалм", "напалмовый", "залп", "напалмовый залп")]
         [Summary("Обожаю запах напалма по утрам...")]
         public async Task CleanAsync([Summary("сколько сообщений уничтожить")] int amount = DefaultMessagesAmount)
         {
@@ -20,6 +20,7 @@ namespace Manul.Modules
                 builder.Title = "";
                 builder.Description = "Никак нет! Только по приказу командира.";
                 await Context.Message.ReplyAsync(string.Empty, false, builder.Build());
+                return;
             }
 
             if (amount > МахMessagesAmount)
