@@ -65,7 +65,16 @@ namespace Manul
         private static void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton(new DiscordSocketClient(new DiscordSocketConfig
-                            { LogLevel = LogSeverity.Verbose, MessageCacheSize = Config.MessageCacheSize } ))
+                            {
+                                LogLevel = LogSeverity.Verbose,
+                                MessageCacheSize = Config.MessageCacheSize,
+                                AlwaysDownloadUsers = true,
+                                GatewayIntents = GatewayIntents.Guilds |
+                                                 GatewayIntents.GuildMembers |
+                                                 GatewayIntents.GuildMessageReactions |
+                                                 GatewayIntents.GuildMessages |
+                                                 GatewayIntents.GuildVoiceStates
+                            } ))
                     .AddSingleton(new CommandService(new CommandServiceConfig
                             { LogLevel = LogSeverity.Verbose, DefaultRunMode = RunMode.Async } ))
                     .AddSingleton<CommandHandler>()

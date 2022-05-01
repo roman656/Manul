@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
-using Discord.WebSocket;
 
 namespace Manul.Modules
 {
@@ -13,11 +12,11 @@ namespace Manul.Modules
         
         [Command("avatar"), Alias("a", "ava", "а", "ава", "аватар", "аватарка", "аватарочка")]
         [Summary("подгоню тебе аватарку (либо твою, либо чужую)))")]
-        public async Task GetAvatarAsync([Summary("чью аватарку тебе принести")] SocketUser user = null)
+        public async Task GetAvatarAsync([Summary("чью аватарку тебе принести")][Remainder] IGuildUser user = null)
         {
             var builder = new EmbedBuilder { Color = Config.EmbedColor, Title = "На держи, только тихо..." };
 
-            user ??= Context.User;
+            user ??= (IGuildUser)Context.User;
 
             if (user.Username == "pomaxpen" && Context.User.Username != "pomaxpen")
             {
