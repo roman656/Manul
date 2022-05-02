@@ -7,7 +7,8 @@ namespace Manul.Modules
 {
     public class AvatarModule : ModuleBase<SocketCommandContext>
     {
-        private const int FailureRate = 90;
+        private const int FailureRate = 80;
+        private const int AvatarSize = 1024;
         private readonly Random _random = new ();
         
         [Command("avatar")]
@@ -29,10 +30,10 @@ namespace Manul.Modules
             }
             else
             {
-                var avatarUrl = user.GetAvatarUrl() ?? user.GetDefaultAvatarUrl();
+                var avatarUrl = user.GetAvatarUrl(size: AvatarSize) ?? user.GetDefaultAvatarUrl();
 
                 builder.Title = "На держи, только тихо...";
-                builder.Description = $"**Если что - это аватарка** ***{user.Nickname ?? user.Username}***";
+                builder.Description = $"**Если что - это аватарка {user.Mention}**";
                 builder.WithImageUrl(avatarUrl);
             }
 
