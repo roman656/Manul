@@ -29,13 +29,8 @@ namespace Manul.Services
             var context = new SocketCommandContext(_client, message);
             var argumentPosition = 0;
 
-            if (context.Channel.Name == "канал-для-музыки-и-ботов" && context.User.IsBot)
-            {
-                await context.Message.AddReactionAsync(new Emoji("🎪"));
-            }
-
             if (message.HasStringPrefix(Config.Prefix, ref argumentPosition)
-                || message.HasMentionPrefix(_client.CurrentUser, ref argumentPosition))
+                    || message.HasMentionPrefix(_client.CurrentUser, ref argumentPosition))
             {
                 if (message.HasMentionPrefix(_client.CurrentUser, ref argumentPosition))
                 {
@@ -62,13 +57,16 @@ namespace Manul.Services
                     else if (result.Error == CommandError.UnknownCommand)
                     {
                         var builder = new EmbedBuilder { Color = Config.EmbedColor,
-                            Description = "**Меня такому не учили...**" };
-
-                        await context.Message.AddReactionAsync(new Emoji("🎪"));
+                                Description = "**Меня такому не учили...**" };
+                        
                         await context.Message.AddReactionAsync(new Emoji("🤡"));
                         await context.Message.ReplyAsync(string.Empty, false, builder.Build());
                     }
-
+                    else if (result.Error == CommandError.ObjectNotFound)
+                    {
+                        var builder = new EmbedBuilder { Color = Config.EmbedColor, Description = "**Чё?**" };
+                        await context.Message.ReplyAsync(string.Empty, false, builder.Build());
+                    }
                     
                     Log.Warning("{Message}", result.ToString());
                 }
