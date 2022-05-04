@@ -41,7 +41,14 @@ namespace Manul.Services
                         argumentPosition++;
                     }
                 }
-                
+
+                if (context.Message.Content.Trim().ToLower() == "!манул")
+                {
+                    var builder = new EmbedBuilder { Color = Config.EmbedColor, Description = $"**{context.User.Mention}, что ты делаешь... Зачем зовёшь меня ты?**" };
+                    await context.Message.ReplyAsync(string.Empty, false, builder.Build());
+                    return;
+                }
+
                 var result = await _commandService.ExecuteAsync(context, argumentPosition, _provider);
 
                 if (!result.IsSuccess)
