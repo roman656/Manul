@@ -69,8 +69,7 @@ namespace Manul.Modules
                             : $"{_random.Next(intMinValue, intMaxValue)}, ");
                 }
 
-                if (intMinValue == DefaultMinValue && intMaxValue == DefaultMaxValue && intAmount == DefaultAmount
-                        && Context.User.Username == "submarinecap" && _random.Next(100) + 1 <= 50)
+                if (Context.User.Username == "submarinecap" && _random.Next(100) + 1 <= 50)
                 {
                     builder.Description = "**Тебе выпало: 1113**";
                 }
