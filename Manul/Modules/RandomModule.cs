@@ -69,7 +69,15 @@ namespace Manul.Modules
                             : $"{_random.Next(intMinValue, intMaxValue)}, ");
                 }
 
-                builder.Description = $"**Тебе выпало: {result}**";
+                if (intMinValue == DefaultMinValue && intMaxValue == DefaultMaxValue && intAmount == DefaultAmount
+                        && Context.User.Username == "submarinecap" && _random.Next(100) + 1 <= 50)
+                {
+                    builder.Description = "**Тебе выпало: 1113**";
+                }
+                else
+                {
+                    builder.Description = $"**Тебе выпало: {result}**";
+                }
             }
             
             await Context.Message.ReplyAsync(string.Empty, false, builder.Build());

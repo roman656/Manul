@@ -7,7 +7,7 @@ namespace Manul.Modules
 {
     public class AvatarModule : ModuleBase<SocketCommandContext>
     {
-        private const int FailureRate = 80;
+        private const int FailureRate = 70;
         private const int AvatarSize = 1024;
         private readonly Random _random = new ();
         
@@ -23,6 +23,10 @@ namespace Manul.Modules
             if (user.Username == "pomaxpen" && Context.User.Username != "pomaxpen")
             {
                 builder.Description = "**А может тебе ещё спину вареньем намазать?))**";
+            }
+            else if (user.Username == "submarinecap" && Context.User.Username != "submarinecap")
+            {
+                builder.Description = "**1113**";
             }
             else if (user.Username == "Манул" && _random.Next(100) + 1 <= FailureRate)
             {

@@ -42,7 +42,7 @@ namespace Manul.Services
                     }
                 }
 
-                if (context.Message.Content.Trim().ToLower() == "!манул")
+                if (context.Message.Content.Trim().ToLower().StartsWith("!манул"))
                 {
                     var builder = new EmbedBuilder { Color = Config.EmbedColor, Description = $"**{context.User.Mention}, что ты делаешь... Зачем зовёшь меня ты?**" };
                     await context.Message.ReplyAsync(string.Empty, false, builder.Build());
