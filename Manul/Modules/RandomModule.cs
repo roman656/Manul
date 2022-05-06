@@ -13,6 +13,7 @@ namespace Manul.Modules
         private const int DefaultAmount = 1;
         private const int FailureRate = 5;
         private const int MaxAmount = 20;
+        private static int _randomCounter;
         private readonly Random _random = new ();
 
         [Command("rand"), Alias("r", "random", "р", "рандом", "ранд", "кубики", "кубик", "кости")]
@@ -72,6 +73,16 @@ namespace Manul.Modules
                 if (Context.User.Username == "submarinecap" && _random.Next(100) + 1 <= 50)
                 {
                     builder.Description = "**Тебе выпало: 1113**";
+                }
+                else if (Context.User.Username == "null me" && _randomCounter == 0)
+                {
+                    builder.Description = "**Тебе выпало: 1**";
+                    _randomCounter++;
+                }
+                else if (Context.User.Username == "null me" && _randomCounter == 1)
+                {
+                    builder.Description = "**Тебе выпало: 4**";
+                    _randomCounter++;
                 }
                 else
                 {
