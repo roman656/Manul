@@ -9,7 +9,7 @@ namespace Manul.Modules
 {
     public class VotingModule : ModuleBase<SocketCommandContext>
     {
-        private readonly string[] _separators = { "[", ";", ",", ".", "]", "или", "либо" };
+        private readonly string[] _separators = { "[", ";", ",", ".", "]", "или", "либо", "ИЛИ", "ЛИБО", "Или", "Либо" };
 
         public VotingModule(DiscordSocketClient client) => client.SelectMenuExecuted += SelectMenuHandler;
 

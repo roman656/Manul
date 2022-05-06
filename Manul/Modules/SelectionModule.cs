@@ -8,7 +8,7 @@ namespace Manul.Modules
     public class SelectionModule : ModuleBase<SocketCommandContext>
     {
         private readonly Random _random = new ();
-        private readonly string[] _separators = { "[", ";", ",", ".", "]", "или", "либо" };
+        private readonly string[] _separators = { "[", ";", ",", ".", "]", "или", "либо", "ИЛИ", "ЛИБО", "Или", "Либо" };
         
         [Command("select"), Alias("choose", "sel", "ch", "выбери", "выбор", "выбирай", "выбрать", "реши")]
         [Summary("принимаю ответственные решения за тебя)")]
@@ -22,7 +22,7 @@ namespace Manul.Modules
             }
             else
             {
-                var answers = input.Trim().ToLower().Split(_separators, StringSplitOptions.RemoveEmptyEntries);
+                var answers = input.Trim().Split(_separators, StringSplitOptions.RemoveEmptyEntries);
                 builder.Description = $"**{(Context.User.Username == "PoorMercymain" ? "Саныч, я" : "Я")} думаю {answers[_random.Next(0, answers.Length)].Trim()}**";
             }
             

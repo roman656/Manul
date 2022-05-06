@@ -9,13 +9,13 @@ namespace Manul.Modules
         private const int DefaultMessagesAmount = 10;
         private const int МахMessagesAmount = 20;
         
-        [Command("clean"), Alias("napalm", "зачистка", "очистка", "чистка", "огонь", "напалм", "напалмовый", "залп", "напалмовый залп")]
+        [Command("clean"), Alias("napalm", "зачистка", "очистка", "чистка", "огонь", "напалм", "напалмовый", "залп", "напалмовый залп", "резня")]
         [Summary("Обожаю запах напалма по утрам...")]
         public async Task CleanAsync([Summary("сколько сообщений уничтожить")] int amount = DefaultMessagesAmount)
         {
             var builder = new EmbedBuilder {Color = Config.EmbedColor, Title = "🔥🔥🔥 Напалмовый залп! 🔥🔥🔥"};
 
-            if (Context.User.Username != "pomaxpen")
+            if (Context.User.Username != "pomaxpen" && Context.Channel.Name != "алое-озеро")
             {
                 builder.Title = "";
                 builder.Description = "Никак нет! Только по приказу командира.";
