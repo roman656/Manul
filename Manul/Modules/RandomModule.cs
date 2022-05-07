@@ -104,7 +104,7 @@ namespace Manul.Modules
         }
         
         [Command("hand"), Alias("рука", "угадай", "угадать", "ру", "ручка", "лапа", "спрячь", "спрятай", "guess")]
-        [Summary("угадай в какой руке)))")]
+        [Summary("угадай в какой лапе)))")]
         public async Task RandHandAsync([Summary("Что спрятать")] string thing = "")
         {
             var builder = new EmbedBuilder { Color = Config.EmbedColor };
