@@ -12,6 +12,7 @@ namespace Manul.Services
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commandService;
         private readonly IServiceProvider _provider;
+        private readonly Random _random = new ();
         
         public CommandHandler(DiscordSocketClient client, CommandService commandService, IServiceProvider provider)
         {
@@ -42,9 +43,17 @@ namespace Manul.Services
                     }
                 }
 
-                if (context.Message.Content.Trim().ToLower().StartsWith("!манул"))
+                if (context.Message.Content.Trim().ToLower().StartsWith("!манул")
+                        || context.Message.Content.Trim().ToLower().StartsWith("!кот"))
                 {
-                    var builder = new EmbedBuilder { Color = Config.EmbedColor, Description = $"**{context.User.Mention}, что ты делаешь... Зачем зовёшь меня ты?**" };
+                    var builder = new EmbedBuilder
+                    {
+                        Color = Config.EmbedColor,
+                        Description = _random.Next(2) == 0
+                                ? $"**Здравствуй, {context.User.Mention}! Зачем зовёшь?) По рофлу или дело есть?))**"
+                                : "**Здарова! Что снилось?))**"
+                    };
+
                     await context.Message.ReplyAsync(string.Empty, false, builder.Build());
                     return;
                 }

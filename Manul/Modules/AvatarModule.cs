@@ -22,7 +22,8 @@ namespace Manul.Modules
 
             if (user.Username == "pomaxpen" && Context.User.Username != "pomaxpen")
             {
-                builder.Description = "**А может тебе ещё спину вареньем намазать?))**";
+                builder.Description = _random.Next(2) == 1 ? "**А может тебе ещё спину вареньем намазать?))**"
+                        : "**Отказано в доступе.**";
             }
             else if (user.Username == "submarinecap" && Context.User.Username != "submarinecap")
             {
@@ -30,7 +31,7 @@ namespace Manul.Modules
             }
             else if (user.Username == "Манул" && _random.Next(100) + 1 <= FailureRate)
             {
-                builder.Description = "**Не покажу. Я стесняюсь...**";
+                builder.Description = _random.Next(2) == 1 ? "**Не покажу. Я стесняюсь...**" : "**Неа))**";
             }
             else
             {

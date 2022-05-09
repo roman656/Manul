@@ -13,8 +13,9 @@ namespace Manul.Modules
         private const int DefaultMinValue = 1;
         private const int DefaultAmount = 1;
         private const int FailureRate = 5;
-        private const int MaxAmount = 20;
-        private static int _randomCounter;
+        private const int MaxAmount = 30;
+        private static int _nullMeCounter;
+        private readonly Random _random = new ();
         private static readonly string[] HandThings =
         {
             "колбаса", "Саныч", "колбоса", "клок шерсти", "арта", "твой диплом", "1 и 4", "пакетик чая «Досада»",
@@ -23,10 +24,11 @@ namespace Manul.Modules
             "премиум аккаунт в Miodenus Project", "RTX 3090", "ПЧЁЛЫ", "лапка кота", "огурец от Копатыча", "шашлы4ok",
             "пробитие", "проблемы", "много проблем", "сверх много проблем", "подушка", "холодильник",
             "клоун", "квас 0.5", "квас 0.3", "книга рецептов Совуньи", "бумажная мысль", "амнезия", "смешной мем",
-            "несмешной мем", "право не заходить в голосовой канал 1 час", "ссылка на Webinar"
+            "несмешной мем", "право не заходить в голосовой канал 1 час", "ссылка на Webinar", "рисунок танка",
+            "рисунок танка", "карась", "плитка шоколада", "автомат по любому предмету", "бесплатная консультация по WoT",
+            "платная консультация по WoT"
         };
-        private readonly Random _random = new ();
-        
+
         public RandomModule(DiscordSocketClient client) => client.ButtonExecuted += ChooseHandButtonHandler;
 
         [Command("rand"), Alias("r", "random", "р", "рандом", "ранд", "кубики", "кубик", "кости")]
@@ -87,15 +89,15 @@ namespace Manul.Modules
                 {
                     builder.Description = "**Тебе выпало: 1113**";
                 }
-                else if (Context.User.Username == "null me" && _randomCounter == 0)
+                else if (Context.User.Username == "null me" && _nullMeCounter == 0)
                 {
                     builder.Description = "**Тебе выпало: 1**";
-                    _randomCounter++;
+                    _nullMeCounter++;
                 }
-                else if (Context.User.Username == "null me" && _randomCounter == 1)
+                else if (Context.User.Username == "null me" && _nullMeCounter == 1)
                 {
                     builder.Description = "**Тебе выпало: 4**";
-                    _randomCounter++;
+                    _nullMeCounter++;
                 }
                 else
                 {
@@ -154,11 +156,11 @@ namespace Manul.Modules
 
             if (component.Data.CustomId.StartsWith("left"))
             {
-                builder.Description = $"**{component.User.Mention}, думаешь, что в левой?))**\n**{(result == 0 ? $"Ладно, угадал))\n Твой приз: {component.Data.CustomId.Substring(4)}" : $"Ахахах, не угадал))\nТеперь {component.Data.CustomId.Substring(4)} - мой приз))")}**";
+                builder.Description = $"**{component.User.Mention}, думаешь, что в левой?))**\n**{(result == 0 ? $"Ладно, угадал))\nТвой приз: {component.Data.CustomId.Substring(4)}" : $"Ахахах, не угадал))\nТеперь {component.Data.CustomId.Substring(4)} - мой приз))")}**";
             }
             else if (component.Data.CustomId.StartsWith("right"))
             {
-                builder.Description = $"**{component.User.Mention}, думаешь, что в правой?))**\n**{(result == 1 ? $"Ладно, угадал))\n Твой приз: {component.Data.CustomId.Substring(5)}" : $"Ахахах, не угадал))\nТеперь {component.Data.CustomId.Substring(5)} - мой приз))")}**";
+                builder.Description = $"**{component.User.Mention}, думаешь, что в правой?))**\n**{(result == 1 ? $"Ладно, угадал))\nТвой приз: {component.Data.CustomId.Substring(5)}" : $"Ахахах, не угадал))\nТеперь {component.Data.CustomId.Substring(5)} - мой приз))")}**";
             }
             else
             {
