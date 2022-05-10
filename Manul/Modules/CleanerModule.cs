@@ -18,7 +18,7 @@ namespace Manul.Modules
         {
             var builder = new EmbedBuilder { Color = Config.EmbedColor, Title = "🔥🔥🔥 Напалмовый залп! 🔥🔥🔥" };
 
-            if (!UsersWithAccess.Contains(Context.User.Username))
+            if (!UsersWithAccess.Contains(Context.User.Username) && Context.Channel.Name != "алое-озеро")
             {
                 builder.Title = "";
                 builder.Description = "Никак нет! Только по приказу начальства.";
