@@ -14,7 +14,8 @@ namespace Manul.Modules
         [Command("clean")]
         [Alias("napalm", "зачистка", "очистка", "чистка", "огонь", "напалм", "напалмовый", "залп", "напалмовый залп", "резня", "уничтожить", "устранить", "артподготовка")]
         [Summary("Обожаю запах напалма по утрам...")]
-        public async Task CleanAsync([Summary("сколько сообщений уничтожить")] int amount = DefaultMessagesAmount)
+        public async Task CleanAsync([Summary("сколько сообщений уничтожить")] int amount = DefaultMessagesAmount,
+                [Summary("по кому открыть огонь")][Remainder] IGuildUser user = null)
         {
             var builder = new EmbedBuilder { Color = Config.EmbedColor, Title = "🔥🔥🔥 Напалмовый залп! 🔥🔥🔥" };
 

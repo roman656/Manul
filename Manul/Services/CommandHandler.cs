@@ -13,6 +13,12 @@ namespace Manul.Services
         private readonly CommandService _commandService;
         private readonly IServiceProvider _provider;
         private readonly Random _random = new ();
+        private static readonly string[] Answers =
+        {
+            "**Здравствуй! Зачем зовёшь?) По рофлу или дело есть?))**", "**Здарова! Что снилось?))**", "**Привет)**",
+            "**Ку!**", "**Привет!**", "**Я Вас категорически приветствую!**", "**Ну здарова!**", "**Миу-миу-миу**",
+            "***Приветствует по-манульи.***", "**МЯЯЯЯЯЯУ!**", "**Здарова!**", "**О, привет!**"
+        };
         
         public CommandHandler(DiscordSocketClient client, CommandService commandService, IServiceProvider provider)
         {
@@ -44,15 +50,23 @@ namespace Manul.Services
                 }
 
                 if (context.Message.Content.Trim().ToLower().StartsWith("!манул")
-                        || context.Message.Content.Trim().ToLower().StartsWith("!кот"))
+                        || context.Message.Content.Trim().ToLower().StartsWith("!монул")
+                        || context.Message.Content.Trim().ToLower().StartsWith("!минул")
+                        || context.Message.Content.Trim().ToLower().StartsWith("!pallascat")
+                        || context.Message.Content.Trim().ToLower().StartsWith("!pallas cat")
+                        || context.Message.Content.Trim().ToLower().StartsWith("!кот")
+                        || context.Message.Content.Trim().ToLower().StartsWith("!привет"))
                 {
                     var builder = new EmbedBuilder
                     {
                         Color = Config.EmbedColor,
-                        Description = _random.Next(2) == 0
-                                ? $"**Здравствуй, {context.User.Mention}! Зачем зовёшь?) По рофлу или дело есть?))**"
-                                : "**Здарова! Что снилось?))**"
+                        Description = Answers[_random.Next(Answers.Length)]
                     };
+
+                    if (context.User.Username == "null me" && _random.Next(100) + 1 <= 35)
+                    {
+                        builder.Description = "Привет Лисичка!!!";
+                    }
 
                     await context.Message.ReplyAsync(string.Empty, false, builder.Build());
                     return;
