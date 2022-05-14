@@ -32,7 +32,7 @@ namespace Manul.Modules
             {
                 builder.Description = _random.Next(2) == 1
                         ? "**Привет, Лисичка!!!**"
-                        : "**И тебе привет, Алиса) Опять ищешь скрытые команды?) Ну ищи, ищи))**";
+                        : ":cat2:";
             }
             else if (Context.User.Username == "PoorMercymain" && _random.Next(100) + 1 <= PersonalizedResponseRate)
             {
