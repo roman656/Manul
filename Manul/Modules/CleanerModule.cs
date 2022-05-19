@@ -12,24 +12,33 @@ namespace Manul.Modules
         private const int DefaultMessagesAmount = 15;
         private const int МахMessagesAmount = 30;
         private const int DeletionDelay = 1000;
+        private const int DelayBeforeGettingMessages = 50;
+        private const int ReplyMessageDeletionDelay = 3000;
         
         [Command("clean")]
-        [Alias("napalm", "зачистка", "очистка", "чистка", "огонь", "напалм", "напалмовый", "залп",
-                "напалмовый залп", "резня", "уничтожить", "устранить", "артподготовка")]
+        [Alias("napalm", "fire", "clear", "зачистка", "очистка", "чистка", "огонь", "напалм", "напалмовый",
+                "залп", "напалмовый залп", "резня", "уничтожить", "устранить", "нейтрализовать", "артподготовка")]
         [Summary("Обожаю запах напалма по утрам...")]
         public async Task CleanAsync([Summary("сколько сообщений уничтожить")] int amount = DefaultMessagesAmount,
                 [Summary("по кому открыть огонь")][Remainder] IGuildUser user = null)
         {
             var builder = new EmbedBuilder { Color = Config.EmbedColor, Title = "🔥🔥🔥 Напалмовый залп! 🔥🔥🔥" };
-            
+
+            await Context.Message.DeleteAsync();
+
             if (!UsersWithAccess.Contains(Context.User.Username) && !ChannelsWithAccess.Contains(Context.Channel.Name))
             {
-                builder.Title = "";
-                builder.Description = "Никак нет! Только по приказу начальства.";
-                await Context.Message.ReplyAsync(string.Empty, false, builder.Build());
+                builder.Title = string.Empty;
+                builder.Description = "**Никак нет! Только по приказу начальства.**";
+
+                var replyMessage = await Context.Channel.SendMessageAsync(string.Empty, false, builder.Build());
+                
+                await Task.Delay(ReplyMessageDeletionDelay);
+                await replyMessage.DeleteAsync();
+                
                 return;
             }
-            
+
             if (amount > МахMessagesAmount)
             {
                 amount = МахMessagesAmount;
@@ -38,6 +47,8 @@ namespace Manul.Modules
             {
                 amount = 1;
             }
+            
+            await Task.Delay(DelayBeforeGettingMessages);
 
             var messages = await Context.Channel.GetMessagesAsync(amount).FlattenAsync();
 
@@ -46,7 +57,20 @@ namespace Manul.Modules
                 messages = messages.Where(message => message.Author.Id == user.Id);
             }
 
-            var startMessage = await Context.Message.ReplyAsync(string.Empty, false, builder.Build());
+            if (!messages.Any())
+            {
+                builder.Title = string.Empty;
+                builder.Description = "**Противник не обнаружен!**";
+
+                var replyMessage = await Context.Channel.SendMessageAsync(string.Empty, false, builder.Build());
+                
+                await Task.Delay(ReplyMessageDeletionDelay);
+                await replyMessage.DeleteAsync();
+                
+                return;
+            }
+
+            var startMessage = await Context.Channel.SendMessageAsync(string.Empty, false, builder.Build());
 
             foreach (var message in messages)
             {

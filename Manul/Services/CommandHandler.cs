@@ -67,6 +67,11 @@ namespace Manul.Services
                         var builder = new EmbedBuilder { Color = Config.EmbedColor, Description = "**Чё?**" };
                         await context.Message.ReplyAsync(string.Empty, false, builder.Build());
                     }
+                    else if (result.Error == CommandError.ParseFailed)
+                    {
+                        var builder = new EmbedBuilder { Color = Config.EmbedColor, Description = "**Я не понял...**" };
+                        await context.Message.ReplyAsync(string.Empty, false, builder.Build());
+                    }
                     
                     Log.Warning("{Message}", result.ToString());
                 }
