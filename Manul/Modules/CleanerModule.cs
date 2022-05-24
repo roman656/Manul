@@ -20,7 +20,7 @@ namespace Manul.Modules
         [Command("clean")]
         [Alias("napalm", "fire", "clear", "зачистка", "очистка", "чистка", "огонь", "напалм", "напалмовый",
                 "залп", "напалмовый залп", "резня", "уничтожить", "устранить", "нейтрализовать", "артподготовка")]
-        [Summary("Обожаю запах напалма по утрам...")]
+        [Summary("обожаю запах напалма по утрам...")]
         public async Task CleanAsync([Summary("сколько сообщений уничтожить")] int amount = DefaultMessagesAmount,
                 [Summary("по кому открыть огонь")] [Remainder] IGuildUser user = null)
         {

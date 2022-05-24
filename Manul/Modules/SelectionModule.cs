@@ -23,7 +23,15 @@ namespace Manul.Modules
             else
             {
                 var answers = input.Trim().Split(_separators, StringSplitOptions.RemoveEmptyEntries);
-                builder.Description = $"**{(Context.User.Username == "PoorMercymain" ? "Саныч, я" : "Я")} думаю {answers[_random.Next(0, answers.Length)].Trim()}**";
+
+                if (answers.Length == 0)
+                {
+                    builder.Description = "**А я кто, чтоб такие ребусы обдумывать?))**";
+                }
+                else
+                {
+                    builder.Description = $"**{(Context.User.Username == "PoorMercymain" ? "Саныч, я" : "Я")} думаю {answers[_random.Next(0, answers.Length)].Trim()}**";
+                }
             }
             
             await Context.Message.ReplyAsync(string.Empty, false, builder.Build());
