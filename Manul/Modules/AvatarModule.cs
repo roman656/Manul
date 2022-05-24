@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
@@ -10,7 +12,12 @@ namespace Manul.Modules
         private const int FailureRate = 70;
         private const int AvatarSize = 1024;
         private readonly Random _random = new ();
-        
+        private static readonly Dictionary<string, List<string>> VipUsers = new ()
+        {
+            { "pomaxpen", new List<string> { "**А может тебе ещё спину вареньем намазать?))**", "**Отказано в доступе.**" } },
+            { "submarinecap", new List<string> { "**1113**" } }
+        };
+
         [Command("avatar")]
         [Alias("a", "ava", "userpic", "юзерпик", "а", "ава", "аватар", "аватарка", "аватарочка")]
         [Summary("подгоню тебе аватарку (либо твою, либо чужую)))")]
@@ -20,14 +27,11 @@ namespace Manul.Modules
 
             user ??= (IGuildUser)Context.User;
 
-            if (user.Username == "pomaxpen" && Context.User.Username != "pomaxpen")
+            if (VipUsers.Keys.Contains(user.Username) && Context.User.Username != user.Username)
             {
-                builder.Description = _random.Next(2) == 1 ? "**А может тебе ещё спину вареньем намазать?))**"
-                        : "**Отказано в доступе.**";
-            }
-            else if (user.Username == "submarinecap" && Context.User.Username != "submarinecap")
-            {
-                builder.Description = "**1113**";
+                var answersList = VipUsers[user.Username];
+                
+                builder.Description = answersList[_random.Next(answersList.Count)];
             }
             else if (user.Username == "Манул" && _random.Next(100) + 1 <= FailureRate)
             {

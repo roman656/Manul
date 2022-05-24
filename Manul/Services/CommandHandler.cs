@@ -75,6 +75,12 @@ namespace Manul.Services
                     
                     Log.Warning("{Message}", result.ToString());
                 }
+                
+                if (context.User.Username == "MOMIMU")
+                {
+                    var builder = new EmbedBuilder { Color = Config.EmbedColor, Description = "**Милорд**" };
+                    await context.Message.ReplyAsync(string.Empty, false, builder.Build());
+                }
             }
         }
     }

@@ -29,7 +29,7 @@ namespace Manul.Modules
 
         public RandomModule(DiscordSocketClient client) => client.ButtonExecuted += ChooseHandButtonHandler;
 
-        [Command("rand"), Alias("r", "random", "р", "рандом", "ранд", "кубики", "кубик", "кости")]
+        [Command("rand"), Alias("r", "random", "р", "рандом", "ранд", "кубики", "кубик", "куб", "кости")]
         [Summary("кидаю за тебя кубики и смотрю, что выпадет)")]
         public async Task RandAsync([Summary("нижняя граница диапазона")] string minValue = "", 
                 [Summary("верхняя граница диапазона")] string maxValue = "",
