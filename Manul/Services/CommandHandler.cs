@@ -41,6 +41,23 @@ namespace Manul.Services
                         argumentPosition++;
                     }
                 }
+                
+                if (context.Message.Content.Trim().ToLower().StartsWith("!что снилос"))
+                {
+                    var builder = new EmbedBuilder
+                    {
+                        Color = Config.EmbedColor,
+                        Description = "**1001111001111010111101010101010000011110101010100101010101010**"
+                    };
+
+                    if (context.User.Username == "null me")
+                    {
+                        builder.Description = "**Снились прикольные разговоры манулов в голосовом канале связи, Лисичка. Ну, и как в меня было заложено — танки. ДААААА, ТАНКИ! Начни играть прямо сейчас...**";
+                    }
+
+                    await context.Message.ReplyAsync(string.Empty, false, builder.Build());
+                    return;
+                }
 
                 var result = await _commandService.ExecuteAsync(context, argumentPosition, _provider);
 
