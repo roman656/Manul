@@ -34,7 +34,7 @@ namespace Manul.Modules
                 }
                 else
                 {
-                    builder.Description = $"**{(Context.User.Username == "PoorMercymain" ? "Саныч, я" : "Я")} думаю {answers[_random.Next(0, answers.Length)].Trim()}**";
+                    builder.Description = $"**{(Context.User.Username == "PoorMercymain" ? "Саныч, я" : Context.User.Username == "null me" ? "Лисичка, я" : "Я")} думаю {answers[_random.Next(0, answers.Length)].Trim()}**";
                 }
             }
             
