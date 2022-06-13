@@ -27,7 +27,7 @@ namespace Manul.Modules
                     
                     if (result.IsSuccess)
                     {
-                        description += $"*{Config.Prefix}{commandInfo.Aliases[0]}{(commandInfo.Parameters.Count > 0 ? " (c аргументами)" : "")}*\n";
+                        description += $"*{Config.Prefixes}{commandInfo.Aliases[0]}{(commandInfo.Parameters.Count > 0 ? " (c аргументами)" : "")}*\n";
                     }
                 }
                 

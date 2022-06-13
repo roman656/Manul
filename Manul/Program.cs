@@ -24,8 +24,8 @@ namespace Manul
             try
             {
                 LoggingService.PrepareLogger();
-                CheckFile(Config.Filename);
-                Config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(Config.Filename));
+                CheckFile(Config.ConfigFilename);
+                Config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(Config.ConfigFilename));
                 new Program().MainAsync().GetAwaiter().GetResult();
             }
             catch (Exception exception)

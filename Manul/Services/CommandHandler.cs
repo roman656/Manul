@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
@@ -29,8 +30,8 @@ namespace Manul.Services
             var context = new SocketCommandContext(_client, message);
             var argumentPosition = 0;
 
-            if (message.HasStringPrefix(Config.Prefix, ref argumentPosition)
-                    || message.HasMentionPrefix(_client.CurrentUser, ref argumentPosition))
+            if (message.HasStringPrefix(Config.Prefixes[0], ref argumentPosition) || message.HasStringPrefix(Config.Prefixes[1], ref argumentPosition) || message.HasStringPrefix(Config.Prefixes[2], ref argumentPosition)
+                || message.HasMentionPrefix(_client.CurrentUser, ref argumentPosition))
             {
                 if (message.HasMentionPrefix(_client.CurrentUser, ref argumentPosition))
                 {
@@ -52,7 +53,7 @@ namespace Manul.Services
 
                     if (context.User.Username == "null me")
                     {
-                        builder.Description = "**Снились прикольные разговоры манулов в голосовом канале связи, Лисичка. Ну, и как в меня было заложено — танки. ДААААА, ТАНКИ! Начни играть прямо сейчас...**";
+                        builder.Description = "**Снилось... Что?! МНЕ НЕ ПОКАЗАЛОСЬ?!! ДААААА, ТАААНКИИИИИИИ!**";
                     }
 
                     await context.Message.ReplyAsync(string.Empty, false, builder.Build());

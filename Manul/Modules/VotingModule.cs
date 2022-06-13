@@ -4,12 +4,13 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using Serilog;
 
 namespace Manul.Modules
 {
     public class VotingModule : ModuleBase<SocketCommandContext>
     {
-        private readonly string[] _separators = { "[", ";", ",", ".", "]", "или", "либо", "ИЛИ", "ЛИБО", "Или", "Либо" };
+        private readonly string[] _separators = { "[", ";", ",", "]", "или", "либо", "ИЛИ", "ЛИБО", "Или", "Либо" };
 
         public VotingModule(DiscordSocketClient client) => client.SelectMenuExecuted += SelectMenuHandler;
 
@@ -137,6 +138,8 @@ namespace Manul.Modules
                     
                     builder.Title = $"Результаты опроса от *{votingData.Author}*";
                     builder.Description = $"**Тема:** ***{votingData.Theme}***";
+                    
+                    Log.Debug(votingData.ToString());
 
                     var results = new Dictionary<int, int>();
 

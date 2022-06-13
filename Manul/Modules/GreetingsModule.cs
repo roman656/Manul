@@ -7,7 +7,7 @@ namespace Manul.Modules
 {
     public class GreetingsModule : ModuleBase<SocketCommandContext>
     {
-        private const int PersonalizedResponseRate = 35;
+        private const int PersonalizedResponseRate = 45;
         private readonly Random _random = new ();
         private static readonly string[] GreetingsAnswers =
         {
@@ -31,8 +31,8 @@ namespace Manul.Modules
             if (Context.User.Username == "null me" && _random.Next(100) + 1 <= PersonalizedResponseRate)
             {
                 builder.Description = _random.Next(2) == 1
-                        ? "**Привет, Лисичка!!!**"
-                        : ":cat2:";
+                        ? "**ЛИСИЧКА, ПРИВЕТ!!!**"
+                        : _random.Next(2) == 1 ? ":cat2:" : "**Привет, Лисичка!!!**";
             }
             else if (Context.User.Username == "PoorMercymain" && _random.Next(100) + 1 <= PersonalizedResponseRate)
             {

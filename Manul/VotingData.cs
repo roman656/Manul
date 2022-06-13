@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
+using System.Text;
 
 namespace Manul
 {
     public class VotingData
     {
         private const int DefaultDurationInMinutes = 1440;    // 24 часа.
+        private static int _index;
         public string Name { get; set; }
         public string Theme { get; set; }
         public string Author { get; set; }
@@ -16,18 +19,46 @@ namespace Manul
         public Dictionary<string, List<int>> UserAnswers { get; set; }
 
         public VotingData(string name, string theme, Dictionary<int, string> answers, string author = "",
-                string creationDate = "", string expiryDate = "", Dictionary<string, List<int>> userAnswers = null)
+                string creationDate = "", string expiryDate = "", Dictionary<string, List<int>> userAnswers = null,
+                int durationInMinutes = DefaultDurationInMinutes)
         {
-            Name = name;
-            Theme = theme;
-            Author = string.IsNullOrEmpty(author) || string.IsNullOrWhiteSpace(author) ? "Аноним" : author;
-            CreationDate = string.IsNullOrEmpty(creationDate) || string.IsNullOrWhiteSpace(creationDate)
-                    ? DateTime.Now.ToString(CultureInfo.InvariantCulture) : creationDate;
-            ExpiryDate = string.IsNullOrEmpty(expiryDate) || string.IsNullOrWhiteSpace(expiryDate)
-                    ? DateTime.Parse(CreationDate, CultureInfo.InvariantCulture).AddMinutes(DefaultDurationInMinutes)
-                    .ToString(CultureInfo.InvariantCulture) : expiryDate;
+            Name = string.IsNullOrEmpty(name.Trim()) ? $"Unnamed_{_index++}" : name.Trim();
+            Theme = theme.Trim();
+            Author = author.Trim();
+            CreationDate = string.IsNullOrEmpty(creationDate.Trim())
+                    ? DateTime.Now.ToString(CultureInfo.CurrentCulture)
+                    : creationDate.Trim();
+            ExpiryDate = string.IsNullOrEmpty(expiryDate.Trim())
+                    ? DateTime.Parse(CreationDate, CultureInfo.CurrentCulture).AddMinutes(durationInMinutes > 0
+                            ? durationInMinutes : DefaultDurationInMinutes).ToString(CultureInfo.CurrentCulture)
+                    : expiryDate.Trim();
             Answers = answers ?? new Dictionary<int, string>();
             UserAnswers = userAnswers ?? new Dictionary<string, List<int>>();
+        }
+
+        public override string ToString()
+        {
+            var result = new StringBuilder(string.Format(CultureInfo.InvariantCulture, $"Voting data:\n\tName: {Name}"
+                    + $"\n\tTheme: {Theme}\n\tAuthor: {Author}\n\tCreation date: {CreationDate}\n\tExpiry date:"
+                    + $" {ExpiryDate}\n\tAnswers:\n\t\t"));
+
+            foreach (var (index, answer) in Answers)
+            {
+                result.Append(string.Format(CultureInfo.InvariantCulture, $"{index}) {answer}\n\t\t"));
+            }
+
+            result.Remove(result.Length - 1, 1);    // Удаление лишней табуляции.
+            result.Append(string.Format(CultureInfo.InvariantCulture, "Users answers:\n\t\t"));
+            
+            foreach (var (username, answers) in UserAnswers)
+            {
+                result.Append(string.Format(CultureInfo.InvariantCulture, $"{username}: "
+                        + $"{answers.Aggregate(string.Empty, (current, answer) => current + $"{answer}, ")}"));
+                result.Remove(result.Length - 2, 2);    // Удаление запятой и пробела, находящихся после последнего варианта ответа.
+                result.Append(string.Format(CultureInfo.InvariantCulture, "\n\t\t"));
+            }
+
+            return result.ToString();
         }
     }
 }

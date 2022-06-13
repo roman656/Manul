@@ -28,10 +28,6 @@ namespace Manul.Modules
                 {
                     builder.Description = "**А я кто, чтоб такие ребусы обдумывать?))**";
                 }
-                else if (answers.Length == 1)
-                {
-                    builder.Description = "**Мне кажется ответ очевиден...**";
-                }
                 else
                 {
                     builder.Description = $"**{(Context.User.Username == "PoorMercymain" ? "Саныч, я" : Context.User.Username == "null me" ? "Лисичка, я" : "Я")} думаю {answers[_random.Next(0, answers.Length)].Trim()}**";
