@@ -30,6 +30,18 @@ namespace Manul.Services
             var context = new SocketCommandContext(_client, message);
             var argumentPosition = 0;
 
+            if (context.Message.Content.EndsWith("("))
+            {
+                var builder = new EmbedBuilder
+                {
+                    Color = Config.EmbedColor,
+                    Description = "**Не грусти**"
+                };
+
+                await context.Message.ReplyAsync(string.Empty, false, builder.Build());
+                return;
+            }
+            
             if (message.HasStringPrefix(Config.Prefixes[0], ref argumentPosition) || message.HasStringPrefix(Config.Prefixes[1], ref argumentPosition) || message.HasStringPrefix(Config.Prefixes[2], ref argumentPosition)
                 || message.HasMentionPrefix(_client.CurrentUser, ref argumentPosition))
             {
