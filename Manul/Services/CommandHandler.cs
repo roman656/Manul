@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
@@ -65,7 +64,7 @@ namespace Manul.Services
 
                     if (context.User.Username == "null me")
                     {
-                        builder.Description = "**Снилось... Что?! МНЕ НЕ ПОКАЗАЛОСЬ?!! ДААААА, ТАААНКИИИИИИИ!**";
+                        builder.Description = "**Да сплошной шоколад)))**";
                     }
 
                     await context.Message.ReplyAsync(string.Empty, false, builder.Build());
