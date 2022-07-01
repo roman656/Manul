@@ -19,7 +19,7 @@ namespace Manul.Modules
         };
 
         [Command("avatar")]
-        [Alias("a", "ava", "userpic", "юзерпик", "а", "ава", "аватар", "аватарка", "аватарочка")]
+        [Alias("a", "ava", "userpic", "юзерпик", "а", "ава", "авка", "аватар", "аватарка", "аватарочка")]
         [Summary("подгоню тебе аватарку (либо твою, либо чужую)))")]
         public async Task GetAvatarAsync([Summary("чью аватарку тебе принести")][Remainder] IGuildUser user = null)
         {

@@ -21,6 +21,31 @@ namespace Manul.Services
 
             _client.MessageReceived += OnMessageReceivedAsync;
         }
+
+        private bool HasMessageBotPrefixes(SocketUserMessage message, ref int argumentPosition)
+        {
+            var result = false;
+
+            if (message.Content.Length > Config.Prefix.Length
+                    && message.HasStringPrefix(Config.Prefix, ref argumentPosition)
+                    && !char.IsWhiteSpace(message.Content[argumentPosition]))
+            {
+                result = true;
+            }
+            else if (message.HasMentionPrefix(_client.CurrentUser, ref argumentPosition)
+                    && message.Content.Length > argumentPosition)
+            {
+                while (message.Content.Length > argumentPosition
+                        && char.IsWhiteSpace(message.Content[argumentPosition]))
+                {
+                    argumentPosition++;
+                }
+
+                result = true;
+            }
+
+            return result;
+        }
         
         private async Task OnMessageReceivedAsync(SocketMessage socketMessage)
         {
@@ -29,76 +54,88 @@ namespace Manul.Services
             var context = new SocketCommandContext(_client, message);
             var argumentPosition = 0;
 
-            if (message.HasStringPrefix(Config.Prefixes[0], ref argumentPosition) || message.HasStringPrefix(Config.Prefixes[1], ref argumentPosition) || message.HasStringPrefix(Config.Prefixes[2], ref argumentPosition)
-                || message.HasMentionPrefix(_client.CurrentUser, ref argumentPosition))
+            if (HasMessageBotPrefixes(message, ref argumentPosition))
             {
-                if (message.HasMentionPrefix(_client.CurrentUser, ref argumentPosition))
-                {
-                    var content = message.Content;
-
-                    while (char.IsWhiteSpace(content[argumentPosition]))
-                    {
-                        argumentPosition++;
-                    }
-                }
-                
-                if (context.Message.Content.Trim().ToLower().StartsWith("!что снилос"))
-                {
-                    var builder = new EmbedBuilder
-                    {
-                        Color = Config.EmbedColor,
-                        Description = "**1001111001111010111101010101010000011110101010100101010101010**"
-                    };
-
-                    if (context.User.Username == "null me")
-                    {
-                        builder.Description = "**Да сплошной шоколад)))**";
-                    }
-
-                    await context.Message.ReplyAsync(string.Empty, false, builder.Build());
-                    return;
-                }
-
-                var result = await _commandService.ExecuteAsync(context, argumentPosition, _provider);
-
-                if (!result.IsSuccess)
-                {
-                    if (result.Error == CommandError.BadArgCount)
-                    {
-                        var builder = new EmbedBuilder { Color = Config.EmbedColor,
-                                Description = "**А у этой команды другое число аргументов)))**" };
-
-                        await context.Message.AddReactionAsync(new Emoji("🤡"));
-                        await context.Message.ReplyAsync(string.Empty, false, builder.Build());
-                    }
-                    else if (result.Error == CommandError.UnknownCommand)
-                    {
-                        var builder = new EmbedBuilder { Color = Config.EmbedColor,
-                                Description = "**Меня такому не учили...**" };
-                        
-                        await context.Message.AddReactionAsync(new Emoji("🤡"));
-                        await context.Message.ReplyAsync(string.Empty, false, builder.Build());
-                    }
-                    else if (result.Error == CommandError.ObjectNotFound)
-                    {
-                        var builder = new EmbedBuilder { Color = Config.EmbedColor, Description = "**Чё?**" };
-                        await context.Message.ReplyAsync(string.Empty, false, builder.Build());
-                    }
-                    else if (result.Error == CommandError.ParseFailed)
-                    {
-                        var builder = new EmbedBuilder { Color = Config.EmbedColor, Description = "**Я не понял...**" };
-                        await context.Message.ReplyAsync(string.Empty, false, builder.Build());
-                    }
-                    
-                    Log.Warning("{Message}", result.ToString());
-                }
-                
                 if (context.User.Username == "MOMIMU")
                 {
                     var builder = new EmbedBuilder { Color = Config.EmbedColor, Description = "**Милорд**" };
                     await context.Message.ReplyAsync(string.Empty, false, builder.Build());
                 }
+                
+                if (await SearchForSecretKeywordsAsync(context, argumentPosition)) return;
+
+                var result = await _commandService.ExecuteAsync(context, argumentPosition, _provider);
+
+                if (!result.IsSuccess)
+                {
+                    var builder = new EmbedBuilder { Color = Config.EmbedColor };
+                    
+                    switch (result.Error)
+                    {
+                        case CommandError.BadArgCount:
+                        {
+                            builder.Description = "**А у этой команды другое число аргументов)))**";
+
+                            await context.Message.AddReactionAsync(new Emoji("🤡"));
+                            await context.Message.ReplyAsync(string.Empty, false, builder.Build());
+                            break;
+                        }
+                        case CommandError.UnknownCommand:
+                        {
+                            builder.Description = "**Меня такому не учили...**";
+                        
+                            await context.Message.AddReactionAsync(new Emoji("🤡"));
+                            await context.Message.ReplyAsync(string.Empty, false, builder.Build());
+                            break;
+                        }
+                        case CommandError.ObjectNotFound:
+                        {
+                            builder.Description = "**Чё?**";
+                            await context.Message.ReplyAsync(string.Empty, false, builder.Build());
+                            break;
+                        }
+                        case CommandError.ParseFailed:
+                        {
+                            builder.Description = "**Я не понял...**";
+                            await context.Message.ReplyAsync(string.Empty, false, builder.Build());
+                            break;
+                        }
+                    }
+
+                    Log.Warning("{Message}", result.ToString());
+                }
             }
+        }
+
+        private static async Task<bool> SearchForSecretKeywordsAsync(SocketCommandContext context, int argumentPosition)
+        {
+            var wasFound = false;
+            var message = context.Message.Content[argumentPosition..].Trim().ToLower();
+            var builder = new EmbedBuilder { Color = Config.EmbedColor };
+            
+            if (message.StartsWith("что снилос"))
+            {
+                builder.Description = "**1001111001111010111101010101010000011110101010100101010101010**";
+
+                if (context.User.Username == "null me")
+                {
+                    builder.Description = "**Весьма занятный бред)))**";
+                }
+                
+                wasFound = true;
+            }
+            else if (message.StartsWith("прив"))
+            {
+                builder.Description = "**Типа привет)**";
+                wasFound = true;
+            }
+
+            if (wasFound)
+            {
+                await context.Message.ReplyAsync(string.Empty, false, builder.Build());
+            }
+            
+            return wasFound;
         }
     }
 }

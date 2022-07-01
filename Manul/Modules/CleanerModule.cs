@@ -22,7 +22,7 @@ namespace Manul.Modules
                 "залп", "напалмовый залп", "резня", "уничтожить", "устранить", "нейтрализовать", "артподготовка")]
         [Summary("обожаю запах напалма по утрам...")]
         public async Task CleanAsync([Summary("сколько сообщений уничтожить")] int amount = DefaultMessagesAmount,
-                [Summary("по кому открыть огонь")] [Remainder] IGuildUser user = null)
+                [Summary("по кому открыть огонь")][Remainder] IGuildUser user = null)
         {
             await Context.Message.DeleteAsync();
             ConstrainAmount(ref amount);
