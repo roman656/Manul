@@ -29,7 +29,7 @@ namespace Manul.Modules
 
             if (!UsersWithAccess.Contains(Context.User.Username) && !ChannelsWithAccess.Contains(Context.Channel.Name))
             {
-                await SendReply("**Никак нет! Только по приказу начальства.**");
+                await SendReplyAsync("**Никак нет! Только по приказу начальства.**");
                 return;
             }
             
@@ -51,7 +51,7 @@ namespace Manul.Modules
             
             if (messagesList.Count == 0)
             {
-                await SendReply("**Противник не обнаружен!**");
+                await SendReplyAsync("**Противник не обнаружен!**");
                 return;
             }
 
@@ -72,7 +72,7 @@ namespace Manul.Modules
             await startMessage.DeleteAsync();
         }
 
-        private async Task SendReply(string description)
+        private async Task SendReplyAsync(string description)
         {
             var builder = new EmbedBuilder { Color = Config.EmbedColor, Description = description };
             var replyMessage = await Context.Channel.SendMessageAsync(string.Empty, false, builder.Build());

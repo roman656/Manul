@@ -27,7 +27,7 @@ namespace Manul.Modules
 
             user ??= (IGuildUser)Context.User;
 
-            if (VipUsers.Keys.Contains(user.Username) && Context.User.Username != user.Username)
+            if (VipUsers.ContainsKey(user.Username) && Context.User.Username != user.Username)
             {
                 var answersList = VipUsers[user.Username];
                 
