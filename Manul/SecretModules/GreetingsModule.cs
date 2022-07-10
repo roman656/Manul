@@ -12,7 +12,7 @@ public class GreetingsModule : SecretModule
     private readonly Random _random = new ();
     private static readonly Dictionary<string, List<string>> VipUsers = new ()
     {
-        { "null me", new List<string> { "**ЛИСИЧКА, ПРИВЕТ!!!**", ":cat2:",  "**Привет, Лисичка!!!**"} },
+        { "null me", new List<string> { ":cat2:",  "**Привет, Лисичка!**"} },
         { "PoorMercymain", new List<string> { "**Я Вас категорически приветствую, Капитан Флексер!**", "**Клим Саныч, здравствуйте!**"} }
     };
 
