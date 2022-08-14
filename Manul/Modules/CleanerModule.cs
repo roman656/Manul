@@ -8,7 +8,7 @@ using Discord.Commands;
 
 public class CleanerModule : ModuleBase<SocketCommandContext>
 {
-    private static readonly string[] UsersWithAccess = { "pomaxpen", "null me", "Mercer" };
+    private static readonly string[] UsersWithAccess = { "pomaxpen", "null me", "Mercer", "PoorMercymain" };
     private static readonly string[] ChannelsWithAccess = { "алое-озеро" };
     private const int DefaultMessagesAmount = 15;
     private const int МахMessagesAmount = 30;
