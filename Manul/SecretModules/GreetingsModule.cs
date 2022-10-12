@@ -13,7 +13,12 @@ public class GreetingsModule : SecretModule
     private static readonly Dictionary<string, List<string>> VipUsers = new ()
     {
         { "null me", new List<string> { ":cat2:",  "**Привет, Лисичка!**"} },
-        { "PoorMercymain", new List<string> { "**Я Вас категорически приветствую, Капитан Флексер!**", "**Клим Саныч, здравствуйте!**"} }
+        { "PoorMercymain", new List<string> { "**Я Вас категорически приветствую, Капитан Флексер!**", 
+            "**Клим Саныч, здравствуйте!**"} },
+        { "Karpuhina Anna", new List<string> { "**Госпожа Анна, здравствуйте!**", "Привет, Аня"} },
+        { "pomaxpen", new List<string> { "**Роман Дмитриевич, ваша группа опять не пришла на занятия. Я вынужден " +
+                                         "написать докладную записку.**", "Роман Дмитриевич, приветствую вас " +
+                                                                          ":hanshake:"} }
     };
 
     public GreetingsModule() : base(
