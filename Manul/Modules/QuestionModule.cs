@@ -1,4 +1,12 @@
-﻿namespace Manul.Modules;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Discord.Addons.Music.Common;
+using Discord.Addons.Music.Player;
+using Discord.Addons.Music.Source;
+using Discord.Audio;
+using Discord.WebSocket;
+
+namespace Manul.Modules;
 
 using System;
 using System.Threading.Tasks;
@@ -45,5 +53,76 @@ public class QuestionModule : ModuleBase<SocketCommandContext>
         }
             
         await Context.Message.ReplyAsync(string.Empty, false, builder.Build());
+        
+        // Initialize AudioPlayer
+        AudioPlayer audioPlayer = new AudioPlayer();
+
+// Set player's audio client
+// This is required for AudioPlayer to create an audio stream to Discord
+        SocketVoiceChannel voiceChannel = (Context.User as SocketGuildUser)?.VoiceChannel;
+        var audioClient = await voiceChannel.ConnectAsync();
+        audioPlayer.SetAudioClient(audioClient);
+        
+        string query = input;
+        bool wellFormedUri = Uri.IsWellFormedUriString(query, UriKind.Absolute);
+        List<AudioTrack> tracks = await TrackLoader.LoadAudioTrack(query, fromUrl: wellFormedUri);
+
+// Pick the first entry and use AudioPlayer.StartTrack to play it on Thread Pool
+        AudioTrack firstTrack = tracks.ElementAt(0);
+        
+
+// OR
+// await track to finish playing
+        await audioPlayer.StartTrackAsync(firstTrack);
+    }
+    
+    public class TrackScheduler
+    {
+        public Queue<AudioTrack> SongQueue { get; set; }
+        private AudioPlayer player;
+
+        public TrackScheduler(AudioPlayer player)
+        {
+            SongQueue = new Queue<AudioTrack>();
+            this.player = player;
+            this.player.OnTrackStartAsync += OnTrackStartAsync;
+            this.player.OnTrackEndAsync += OnTrackEndAsync;
+        }
+
+        public Task Enqueue(AudioTrack track)
+        {
+            if (player.PlayingTrack != null)
+            {
+                SongQueue.Enqueue(track);
+            }
+            else
+            {
+                // fire and forget
+                player.StartTrackAsync(track).ConfigureAwait(false);
+            }
+            return Task.CompletedTask;
+        }
+
+        public async Task NextTrack()
+        {
+            AudioTrack nextTrack;
+            if (SongQueue.TryDequeue(out nextTrack))
+                await player.StartTrackAsync(nextTrack);
+            else
+                player.Stop();
+        }
+
+        private Task OnTrackStartAsync(IAudioClient audioClient, IAudioSource track)
+        {
+            Console.WriteLine("Track start! " + track.Info.Title);
+            return Task.CompletedTask;
+        }
+
+        private async Task OnTrackEndAsync(IAudioClient audioClient, IAudioSource track)
+        {
+            Console.WriteLine("Track end! " + track.Info.Title);
+
+            await NextTrack();
+        }
     }
 }
