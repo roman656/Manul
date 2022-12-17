@@ -1,6 +1,5 @@
 ﻿namespace Manul.Modules;
 
-using System.Net;
 using Discord.Addons.Music.Source;
 using Discord.Audio;
 using System.Collections.Generic;
@@ -121,7 +120,40 @@ public class MusicModule : ModuleBase<SocketCommandContext>
         
         await player.StartTrackAsync(firstTrack);
     }
-    
+
+    [Command("stop"), Alias("выключай", "вырубай")]
+    [Summary("выключаю проигрыватель...")]
+    public async Task StopPlayingAsync()
+    {
+        var builder = new EmbedBuilder {Color = Config.EmbedColor};
+        var guild = (Context.User as SocketGuildUser)?.Guild;
+        
+        if (guild == null)
+        {
+            builder.Description = "**Не осмысляю...**";
+            await Context.Message.ReplyAsync(string.Empty, false, builder.Build());
+            return;
+        }
+        
+        AddNewAudioPlayer(guild.Id);
+        
+        var (player, _) = _serverAudioPlayers[guild.Id];
+        var voiceChannel = (Context.User as SocketGuildUser)?.VoiceChannel;
+
+        if (voiceChannel == null)
+        {
+            builder.Description = "**Хорошая попытка))**";
+            await Context.Message.ReplyAsync(string.Empty, false, builder.Build());
+            return;
+        }
+
+        var audioClient = await voiceChannel.ConnectAsync();
+
+        player.SetAudioClient(audioClient);
+        
+        await audioClient.StopAsync();
+    }
+
     private static string Translit(string str)
     {
         string[] latUp = {"A", "B", "V", "G", "D", "E", "Yo", "Zh", "Z", "I", "Y", "K", "L", "M", "N", "O", "P", "R", "S", "T", "U", "F", "Kh", "Ts", "Ch", "Sh", "Shch", "\"", "Y", "'", "E", "Yu", "Ya"};
