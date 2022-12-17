@@ -18,7 +18,7 @@ public class GreetingsModule : SecretModule
         { "Karpuhina Anna", new List<string> { "**Госпожа Анна, здравствуйте!**", "**Привет, Аня**"} },
         { "pomaxpen", new List<string> { "**Роман Дмитриевич, ваша группа опять не пришла на занятия. Я вынужден " +
                                          "написать докладную записку.**", "**Роман Дмитриевич, приветствую вас** " +
-                                                                          ":hanshake:"} }
+                                                                          ":handshake:"} }
     };
 
     public GreetingsModule() : base(
