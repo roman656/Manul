@@ -121,7 +121,7 @@ public class MusicModule : ModuleBase<SocketCommandContext>
         await player.StartTrackAsync(firstTrack);
     }
 
-    [Command("stop"), Alias("выключай", "вырубай")]
+    [Command("stop"), Alias("выключай", "вырубай", "стоп", "довольно", "хватит")]
     [Summary("выключаю проигрыватель...")]
     public async Task StopPlayingAsync()
     {

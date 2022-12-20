@@ -9,6 +9,6 @@ public class WolfModule : SecretModule
             },
             answers: new[]
             {
-                ":point_up::wolf:"
+                "☝🐺"
             }) {}
 }
