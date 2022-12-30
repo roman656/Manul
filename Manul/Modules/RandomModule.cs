@@ -23,8 +23,9 @@ public class RandomModule : ModuleBase<SocketCommandContext>
         "пакетик чая «Отрада»", "подкрутка", "ящик питеня", "блинчик с клубничным вареньем", "клоун", "квас 0.5",
         "квас 0.3", "книга рецептов Совуньи", "бумажная мысль", "амнезия", "сверх много проблем", "подушка",
         "право не заходить в голосовой канал 1 час", "ссылка на Webinar", "деструктивный мемагент",
-        "карась", "плитка шоколада", "премиум аккаунт в Miodenus Project", "RTX 3090", "ПЧЁЛЫ", "лапка кота",
-        "огурец от Копатыча", "шашлы4ok", "пробитие", "проблемы", "много проблем", "решение проблем (нет)"
+        "карась", "плитка шоколада", "премиум аккаунт в Miodenus Project", "RTX 4090", "ПЧЁЛЫ", "лапка кота",
+        "огурец от Копатыча", "шашлы4ok", "пробитие", "проблемы", "много проблем", "решение проблем (нет)",
+        "чай с баранками", "цистерна варенья", "нерабочий код", "нормальный код", "PayStation 5"
     };
 
     public RandomModule(DiscordSocketClient client) => client.ButtonExecuted += ChooseHandButtonHandler;
@@ -106,7 +107,8 @@ public class RandomModule : ModuleBase<SocketCommandContext>
         await Context.Message.ReplyAsync(string.Empty, false, builder.Build());
     }
         
-    [Command("hand"), Alias("hide", "рука", "угадай", "угадать", "ру", "ручка", "лапа", "лапка", "спрячь", "спрятай", "guess")]
+    [Command("hand"), Alias("hide", "рука", "угадай", "угадать", "ру", "ручка", "лапа", "лапка", "спрячь",
+            "guess")]
     [Summary("угадай в какой лапе)))")]
     public async Task RandHandAsync([Summary("Что спрятать")][Remainder] string thing = "")
     {
