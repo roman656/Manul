@@ -23,14 +23,14 @@ public class VotingModule : ModuleBase<SocketCommandContext>
             [Summary("варианты ответа")][RemainderAttribute] string answers)
     {
         var builder = new EmbedBuilder { Color = Config.EmbedColor };
-            
+
         if (string.IsNullOrEmpty(name) || string.IsNullOrWhiteSpace(name))
         {
             builder.Description = "**Название опроса необходимо... Лично for me...**";
             await Context.Message.ReplyAsync(string.Empty, false, builder.Build());
             return;
         }
-            
+
         name = name.Trim();
 
         foreach (var votingData in Program.VotingData)
@@ -49,9 +49,9 @@ public class VotingModule : ModuleBase<SocketCommandContext>
             await Context.Message.ReplyAsync(string.Empty, false, builder.Build());
             return;
         }
-            
+
         theme = theme.Trim();
-            
+
         if (string.IsNullOrEmpty(answers) || string.IsNullOrWhiteSpace(answers))
         {
             builder.Description = "**А варианты ответов мне самому придумать? Я конечно могу, но...**";
@@ -61,7 +61,7 @@ public class VotingModule : ModuleBase<SocketCommandContext>
 
         builder.Title = $"Автор опроса - *{Context.User.Username}*";
         builder.Description = $"**Тема:** ***{theme}***";
-                
+
         var buttonMessages = answers.Trim().Split(_separators, StringSplitOptions.RemoveEmptyEntries);
         var answersDictionary = new Dictionary<int, string>();
 
@@ -75,27 +75,27 @@ public class VotingModule : ModuleBase<SocketCommandContext>
         {
             minAnswersAmount = 1;
         }
-            
+
         if (maxAnswersAmount < 1)
         {
             maxAnswersAmount = 1;
         }
-            
+
         if (minAnswersAmount > buttonMessages.Length)
         {
             minAnswersAmount = buttonMessages.Length;
         }
-            
+
         if (maxAnswersAmount > buttonMessages.Length)
         {
             maxAnswersAmount = buttonMessages.Length;
         }
-            
+
         if (minAnswersAmount > maxAnswersAmount)
         {
             minAnswersAmount = maxAnswersAmount;
         }
-            
+
         var menuBuilder = new SelectMenuBuilder().WithPlaceholder("Давай выбирай").WithCustomId(name)
                 .WithMinValues(minAnswersAmount).WithMaxValues(maxAnswersAmount);
 
@@ -115,7 +115,7 @@ public class VotingModule : ModuleBase<SocketCommandContext>
     public async Task ShowVotingResultsAsync([Summary("название опроса")] string name)
     {
         var builder = new EmbedBuilder { Color = Config.EmbedColor };
-            
+
         if (string.IsNullOrEmpty(name) || string.IsNullOrWhiteSpace(name))
         {
             builder.Description = "**А название опроса где?**";
@@ -135,10 +135,10 @@ public class VotingModule : ModuleBase<SocketCommandContext>
                     await Context.Message.ReplyAsync(string.Empty, false, builder.Build());
                     return;
                 }
-                    
+
                 builder.Title = $"Результаты опроса от *{votingData.Author}*";
                 builder.Description = $"**Тема:** ***{votingData.Theme}***";
-                    
+
                 Log.Debug(votingData.ToString());
 
                 var results = new Dictionary<int, int>();
@@ -152,7 +152,7 @@ public class VotingModule : ModuleBase<SocketCommandContext>
                 {
                     foreach (var value in userAnswer.Value)
                     {
-                        results[value] += 1;
+                        results[value]++;
                     }
                 }
 
@@ -179,7 +179,7 @@ public class VotingModule : ModuleBase<SocketCommandContext>
                 return;
             }
         }
-            
+
         builder.Description = "**Я чёт такого опроса не помню((**";
         await Context.Message.ReplyAsync(string.Empty, false, builder.Build());
     }
@@ -191,12 +191,12 @@ public class VotingModule : ModuleBase<SocketCommandContext>
             if (votingData.Name == argument.Data.CustomId)
             {
                 votingData.UserAnswers[argument.User.Username] = new List<int>();
-                    
+
                 foreach (var value in argument.Data.Values)
                 {
                     votingData.UserAnswers[argument.User.Username].Add(int.Parse(value));
                 }
-                    
+
                 await argument.RespondAsync("Дописал в книжечку мнение.");
                 await Task.Delay(500);
                 await argument.DeleteOriginalResponseAsync();

@@ -16,7 +16,7 @@ public abstract class SecretModule
         Keywords = keywords;
         Answers = answers;
     }
-    
+
     public virtual bool WasCalled(string message) => Keywords.Any(message.StartsWith);
 
     public virtual async Task SendReplyAsync(SocketCommandContext context)

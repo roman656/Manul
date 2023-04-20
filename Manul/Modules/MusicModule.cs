@@ -14,14 +14,14 @@ using Discord.WebSocket;
 
 public class MusicModule : ModuleBase<SocketCommandContext>
 {
-    private readonly Random _random = new ();
+    private readonly Random _random = new();
     private readonly string[] _commentAnswers =
     {
         "А чё, звучит чотыре)", "Вот это запрос...", "Мда...", "Ну, понеслась!", ")))", "(((", "))",
         "((", ")", "(", "Дементий, блин, я сколько раз уже говорил такие запросы не делать?!",
         "Я, кажется, оглох...", "Интересный выбор)"
     };
-    private readonly Dictionary<string, string> _manulSongs = new ()
+    private readonly Dictionary<string, string> _manulSongs = new()
     {
         { "радио бандитов 📻", "https://youtu.be/Nhrhb9QPCjE" },
         { "Барановичи 🐏", "https://youtu.be/BO1nxYNgg7M" },
@@ -41,10 +41,10 @@ public class MusicModule : ModuleBase<SocketCommandContext>
         {
             var player = new AudioPlayer();
             var queue = new Queue<AudioTrack>();
-            
+
             player.OnTrackStartAsync += OnTrackStartAsync;
             player.OnTrackEndAsync += OnTrackEndAsync;
-            
+
             _serverAudioPlayers.Add(serverId, (player, queue));
         }
     }
@@ -77,16 +77,16 @@ public class MusicModule : ModuleBase<SocketCommandContext>
         }
 
         var guild = (Context.User as SocketGuildUser)?.Guild;
-        
+
         if (guild == null)
         {
             builder.Description = "**Не осмысляю...**";
             await Context.Message.ReplyAsync(string.Empty, false, builder.Build());
             return;
         }
-        
+
         AddNewAudioPlayer(guild.Id);
-        
+
         var (player, _) = _serverAudioPlayers[guild.Id];
         var voiceChannel = (Context.User as SocketGuildUser)?.VoiceChannel;
 
@@ -104,20 +104,20 @@ public class MusicModule : ModuleBase<SocketCommandContext>
         {
             query = Translit(query);    // костыль для +/- нормального поиска на русском.
         }
-        
+
         var tracks = await TrackLoader.LoadAudioTrack(query, fromUrl: wellFormedUri);
-        var firstTrack = tracks.ElementAt(0);
+        var firstTrack = tracks[0];
 
         if (!isUserQueryEmpty)
         {
             builder.ThumbnailUrl = firstTrack.Info.ThumbnailUrl;
             builder.Description = $"**{Context.User.Mention} поставил:\n*{firstTrack.Info.Title}*\n{_commentAnswers[_random.Next(_commentAnswers.Length)]}**";
         }
-        
+
         await Context.Message.ReplyAsync(string.Empty, false, builder.Build());
 
         player.SetAudioClient(audioClient);
-        
+
         await player.StartTrackAsync(firstTrack);
     }
 
@@ -125,18 +125,18 @@ public class MusicModule : ModuleBase<SocketCommandContext>
     [Summary("выключаю проигрыватель...")]
     public async Task StopPlayingAsync()
     {
-        var builder = new EmbedBuilder {Color = Config.EmbedColor};
+        var builder = new EmbedBuilder { Color = Config.EmbedColor };
         var guild = (Context.User as SocketGuildUser)?.Guild;
-        
+
         if (guild == null)
         {
             builder.Description = "**Не осмысляю...**";
             await Context.Message.ReplyAsync(string.Empty, false, builder.Build());
             return;
         }
-        
+
         AddNewAudioPlayer(guild.Id);
-        
+
         var (player, _) = _serverAudioPlayers[guild.Id];
         var voiceChannel = (Context.User as SocketGuildUser)?.VoiceChannel;
 
@@ -150,23 +150,23 @@ public class MusicModule : ModuleBase<SocketCommandContext>
         var audioClient = await voiceChannel.ConnectAsync();
 
         player.SetAudioClient(audioClient);
-        
+
         await audioClient.StopAsync();
     }
 
     private static string Translit(string str)
     {
-        string[] latUp = {"A", "B", "V", "G", "D", "E", "Yo", "Zh", "Z", "I", "Y", "K", "L", "M", "N", "O", "P", "R", "S", "T", "U", "F", "Kh", "Ts", "Ch", "Sh", "Shch", "\"", "Y", "'", "E", "Yu", "Ya"};
-        string[] latLow = {"a", "b", "v", "g", "d", "e", "yo", "zh", "z", "i", "y", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u", "f", "kh", "ts", "ch", "sh", "shch", "\"", "y", "'", "e", "yu", "ya"};
-        string[] rusUp = {"А", "Б", "В", "Г", "Д", "Е", "Ё", "Ж", "З", "И", "Й", "К", "Л", "М", "Н", "О", "П", "Р", "С", "Т", "У", "Ф", "Х", "Ц", "Ч", "Ш", "Щ", "Ъ", "Ы", "Ь", "Э", "Ю", "Я"};
-        string[] rusLow = { "а", "б", "в", "г", "д", "е", "ё", "ж", "з", "и", "й", "к", "л", "м", "н", "о", "п", "р", "с", "т", "у", "ф", "х", "ц", "ч", "ш", "щ", "ъ", "ы", "ь", "э", "ю", "я"};
-        
+        string[] latUp = { "A", "B", "V", "G", "D", "E", "Yo", "Zh", "Z", "I", "Y", "K", "L", "M", "N", "O", "P", "R", "S", "T", "U", "F", "Kh", "Ts", "Ch", "Sh", "Shch", "\"", "Y", "'", "E", "Yu", "Ya" };
+        string[] latLow = { "a", "b", "v", "g", "d", "e", "yo", "zh", "z", "i", "y", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u", "f", "kh", "ts", "ch", "sh", "shch", "\"", "y", "'", "e", "yu", "ya" };
+        string[] rusUp = { "А", "Б", "В", "Г", "Д", "Е", "Ё", "Ж", "З", "И", "Й", "К", "Л", "М", "Н", "О", "П", "Р", "С", "Т", "У", "Ф", "Х", "Ц", "Ч", "Ш", "Щ", "Ъ", "Ы", "Ь", "Э", "Ю", "Я" };
+        string[] rusLow = { "а", "б", "в", "г", "д", "е", "ё", "ж", "з", "и", "й", "к", "л", "м", "н", "о", "п", "р", "с", "т", "у", "ф", "х", "ц", "ч", "ш", "щ", "ъ", "ы", "ь", "э", "ю", "я" };
+
         for (var i = 0; i <= 32; i++)
         {
-            str = str.Replace(rusUp[i],latUp[i]);
-            str = str.Replace(rusLow[i],latLow[i]);              
+            str = str.Replace(rusUp[i], latUp[i]);
+            str = str.Replace(rusLow[i], latLow[i]);
         }
-        
+
         return str;
     }
 }

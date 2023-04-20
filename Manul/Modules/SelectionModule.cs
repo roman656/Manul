@@ -9,7 +9,7 @@ public class SelectionModule : ModuleBase<SocketCommandContext>
 {
     private readonly Random _random = new ();
     private readonly string[] _separators = { "[", ";", ",", "]", "или", "либо", "ИЛИ", "ЛИБО", "Или", "Либо" };
-        
+
     [Command("select"), Alias("choose", "sel", "ch", "выбери", "выбор", "выбирай", "выбрать", "реши")]
     [Summary("принимаю ответственные решения за тебя)")]
     public async Task SelectAsync([Summary("варианты (из чего выбирать)")][RemainderAttribute] string input = "")
@@ -33,7 +33,7 @@ public class SelectionModule : ModuleBase<SocketCommandContext>
                 builder.Description = $"**{(Context.User.Username == "PoorMercymain" ? "Саныч, я" : Context.User.Username == "null me" ? "Лисичка, я" : "Я")} думаю {answers[_random.Next(0, answers.Length)].Trim()}**";
             }
         }
-            
+
         await Context.Message.ReplyAsync(string.Empty, false, builder.Build());
     }
 }

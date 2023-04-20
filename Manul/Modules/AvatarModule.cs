@@ -33,7 +33,7 @@ public class AvatarModule : ModuleBase<SocketCommandContext>
         if (VipUsers.ContainsKey(user.Username) && Context.User.Username != user.Username)
         {
             var answersList = VipUsers[user.Username];
-                
+
             builder.Description = answersList[_random.Next(answersList.Count)];
         }
         else if (user.Username == "Манул" && _random.Next(100) + 1 <= FailureRate)
@@ -51,7 +51,7 @@ public class AvatarModule : ModuleBase<SocketCommandContext>
 
         await Context.Message.ReplyAsync(string.Empty, false, builder.Build());
     }
-    
+
     [Command("triggered")]
     [Alias("триггер", "триггеред", "trigger", "тригер", "тригеред", "triger", "trigered", "триггернуло",
             "тригернуло")]
@@ -65,7 +65,7 @@ public class AvatarModule : ModuleBase<SocketCommandContext>
         if (VipUsers.ContainsKey(user.Username) && Context.User.Username != user.Username)
         {
             var answersList = VipUsers[user.Username];
-                
+
             builder.Description = answersList[_random.Next(answersList.Count)];
         }
         else if (user.Username == "Манул" && _random.Next(100) + 1 <= FailureRate)

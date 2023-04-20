@@ -28,7 +28,7 @@ public class DinnerModule : ModuleBase<SocketCommandContext>
         var brandedDrinksChoice = _menu.ElementAt(0).Value[_random.Next(_menu.ElementAt(0).Value.Length)];
         var sweetPancakesChoice = _menu.ElementAt(1).Value[_random.Next(_menu.ElementAt(1).Value.Length)];
         var saladsChoice = _menu.ElementAt(2).Value[_random.Next(_menu.ElementAt(2).Value.Length)];
-        
+
         builder.Description = $"**Мои рекомендации таковы:\n *— {saladsChoice}\n — {sweetPancakesChoice}\n — {brandedDrinksChoice}***";
 
         await Context.Message.ReplyAsync(string.Empty, false, builder.Build());

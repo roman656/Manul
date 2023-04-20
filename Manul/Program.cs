@@ -15,9 +15,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Serilog;
 
-public class Program
+public static class Program
 {
-    public static Config Config;
+    public static Config Config { get; set; }
     public static readonly List<VotingData> VotingData = new ();
     public static readonly List<SecretModule> SecretModules = new ()
     {
@@ -26,14 +26,14 @@ public class Program
         new MyDreamsModule()
     };
 
-    public static void Main(string[] args)
+    public static void Main()
     {
         try
         {
             LoggingService.PrepareLogger();
             CheckFile(Config.ConfigFilename);
             Config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(Config.ConfigFilename));
-            new Program().MainAsync().GetAwaiter().GetResult();
+            MainAsync().GetAwaiter().GetResult();
         }
         catch (Exception exception)
         {
@@ -41,7 +41,7 @@ public class Program
         }
     }
 
-    private async Task MainAsync()
+    private static async Task MainAsync()
     {
         var services = new ServiceCollection();
         ConfigureServices(services);
@@ -49,7 +49,7 @@ public class Program
         var provider = services.BuildServiceProvider();
         provider.GetRequiredService<LoggingService>();
         provider.GetRequiredService<CommandHandler>();
-            
+
         await provider.GetRequiredService<StartupService>().StartAsync();
         await Task.Delay(Timeout.Infinite);
     }
@@ -57,7 +57,7 @@ public class Program
     private static void CheckFile(in string filename)
     {
         var fileInfo = new FileInfo(filename);
-            
+
         if (!fileInfo.Exists)
         {
             throw new FileNotFoundException($"File {filename} not found.");
@@ -68,7 +68,7 @@ public class Program
             throw new EmptyFileException($"File {filename} is empty.");
         }
     }
-        
+
     private static void ConfigureServices(IServiceCollection services)
     {
         services.AddSingleton(new DiscordSocketClient(new DiscordSocketConfig
@@ -76,7 +76,8 @@ public class Program
                 LogLevel = LogSeverity.Verbose,
                 MessageCacheSize = Config.MessageCacheSize,
                 AlwaysDownloadUsers = true,
-                GatewayIntents = GatewayIntents.Guilds |
+                GatewayIntents = GatewayIntents.MessageContent |
+                                 GatewayIntents.Guilds |
                                  GatewayIntents.GuildMembers |
                                  GatewayIntents.GuildMessageReactions |
                                  GatewayIntents.GuildMessages |

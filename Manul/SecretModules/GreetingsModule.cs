@@ -29,7 +29,7 @@ public class GreetingsModule : SecretModule
                 "**МЯЯЯЯЯЯУ**", "**Здарова!**", "**О, привет!**", "**Здравствуй!**", "**Привет)**", "**Даров)**",
                 "**Да, привет)**"
             }) {}
-    
+
     public override async Task SendReplyAsync(SocketCommandContext context)
     {
         var builder = new EmbedBuilder { Color = Config.EmbedColor };
@@ -37,7 +37,7 @@ public class GreetingsModule : SecretModule
         if (VipUsers.ContainsKey(context.User.Username) && _random.Next(100) + 1 <= PersonalizedResponseRate)
         {
             var answersList = VipUsers[context.User.Username];
-                
+
             builder.Description = answersList[_random.Next(answersList.Count)];
         }
         else

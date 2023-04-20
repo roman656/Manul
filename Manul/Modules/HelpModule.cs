@@ -16,21 +16,21 @@ public class HelpModule : ModuleBase<SocketCommandContext>
     public async Task HelpAsync()
     {
         var builder = new EmbedBuilder { Color = Config.EmbedColor, Title = "Справка :cat::books:" };
-            
+
         foreach (var module in _service.Modules)
         {
             var description = string.Empty;
-                
+
             foreach (var commandInfo in module.Commands)
             {
                 var result = await commandInfo.CheckPreconditionsAsync(Context);
-                    
+
                 if (result.IsSuccess)
                 {
                     description += $"*{Config.Prefix}{commandInfo.Aliases[0]}{(commandInfo.Parameters.Count > 0 ? " (c аргументами)" : "")}*\n";
                 }
             }
-                
+
             if (!string.IsNullOrWhiteSpace(description))
             {
                 builder.AddField(x =>
@@ -60,11 +60,11 @@ public class HelpModule : ModuleBase<SocketCommandContext>
         }
 
         builder.Description = $"**Вот команды, похожие на** ***{command}***";
-            
+
         foreach (var match in result.Commands)
         {
             var commandInfo = match.Command;
-                
+
             builder.AddField(x =>
             {
                 x.Name = string.Join(", ", commandInfo.Aliases);

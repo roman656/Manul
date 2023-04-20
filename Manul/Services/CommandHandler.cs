@@ -24,13 +24,11 @@ public class CommandHandler
 
     private bool HasMessageBotPrefixes(SocketUserMessage message, ref int argumentPosition)
     {
-        var result = false;
-
         if (message.Content.Length > Config.Prefix.Length
                 && message.HasStringPrefix(Config.Prefix, ref argumentPosition)
                 && !char.IsWhiteSpace(message.Content[argumentPosition]))
         {
-            result = true;
+            return true;
         }
         else if (message.HasMentionPrefix(_client.CurrentUser, ref argumentPosition)
                 && message.Content.Length > argumentPosition)
@@ -40,12 +38,12 @@ public class CommandHandler
                 argumentPosition++;
             }
 
-            result = true;
+            return true;
         }
 
-        return result;
+        return false;
     }
-        
+
     private async Task OnMessageReceivedAsync(SocketMessage socketMessage)
     {
         if (socketMessage is not SocketUserMessage message || message.Author.Id == _client.CurrentUser.Id) return;
@@ -62,52 +60,52 @@ public class CommandHandler
             }
 
             var result = await _commandService.ExecuteAsync(context, argumentPosition, _provider);
-            
+
             if (!result.IsSuccess)
             {
                 var builder = new EmbedBuilder { Color = Config.EmbedColor };
-                
+
                 if (await SearchForSecretKeywordsAsync(context, argumentPosition)) return;
-                    
+
                 switch (result.Error)
                 {
                     case CommandError.BadArgCount:
-                    {
-                        builder.Description = "**А у этой команды другое число аргументов)))**";
+                        {
+                            builder.Description = "**А у этой команды другое число аргументов)))**";
 
-                        await context.Message.AddReactionAsync(new Emoji("🤡"));
-                        await context.Message.ReplyAsync(string.Empty, false, builder.Build());
-                        break;
-                    }
+                            await context.Message.AddReactionAsync(new Emoji("🤡"));
+                            await context.Message.ReplyAsync(string.Empty, false, builder.Build());
+                            break;
+                        }
                     case CommandError.UnknownCommand:
-                    {
-                        builder.Description = "**Меня такому не учили...**";
-                        
-                        await context.Message.AddReactionAsync(new Emoji("🤡"));
-                        await context.Message.ReplyAsync(string.Empty, false, builder.Build());
-                        break;
-                    }
-                    case CommandError.ObjectNotFound:
-                    {
-                        builder.Description = "**Чё?**";
-                            
-                        await context.Message.ReplyAsync(string.Empty, false, builder.Build());
-                        break;
-                    }
-                    case CommandError.ParseFailed:
-                    {
-                        builder.Description = "**Я не понял...**";
-                            
-                        await context.Message.ReplyAsync(string.Empty, false, builder.Build());
-                        break;
-                    }
-                    case CommandError.MultipleMatches:
-                    {
-                        builder.Description = "**Неоднозначненько выходит)))**";
+                        {
+                            builder.Description = "**Меня такому не учили...**";
 
-                        await context.Message.ReplyAsync(string.Empty, false, builder.Build());
-                        break;
-                    }
+                            await context.Message.AddReactionAsync(new Emoji("🤡"));
+                            await context.Message.ReplyAsync(string.Empty, false, builder.Build());
+                            break;
+                        }
+                    case CommandError.ObjectNotFound:
+                        {
+                            builder.Description = "**Чё?**";
+
+                            await context.Message.ReplyAsync(string.Empty, false, builder.Build());
+                            break;
+                        }
+                    case CommandError.ParseFailed:
+                        {
+                            builder.Description = "**Я не понял...**";
+
+                            await context.Message.ReplyAsync(string.Empty, false, builder.Build());
+                            break;
+                        }
+                    case CommandError.MultipleMatches:
+                        {
+                            builder.Description = "**Неоднозначненько выходит)))**";
+
+                            await context.Message.ReplyAsync(string.Empty, false, builder.Build());
+                            break;
+                        }
                 }
 
                 Log.Warning("{Message}", result.ToString());

@@ -1,4 +1,6 @@
-﻿namespace Manul.Modules;
+﻿using System;
+
+namespace Manul.Modules;
 
 using System;
 using System.Text;
@@ -32,7 +34,7 @@ public class RandomModule : ModuleBase<SocketCommandContext>
 
     [Command("rand"), Alias("r", "random", "р", "рандом", "ранд", "кубики", "кубик", "куб", "кости")]
     [Summary("кидаю за тебя кубики и смотрю, что выпадет)")]
-    public async Task RandAsync([Summary("нижняя граница диапазона")] string minValue = "", 
+    public async Task RandAsync([Summary("нижняя граница диапазона")] string minValue = "",
             [Summary("верхняя граница диапазона")] string maxValue = "",
             [Summary("количество чисел")] string amount = "")
     {
@@ -77,7 +79,7 @@ public class RandomModule : ModuleBase<SocketCommandContext>
         else
         {
             intMaxValue++;    // Чтоб было включительно.
-                
+
             for (var i = 0; i < intAmount; i++)
             {
                 result.Append(i == intAmount - 1 ? $"{_random.Next(intMinValue, intMaxValue)}"
@@ -103,10 +105,10 @@ public class RandomModule : ModuleBase<SocketCommandContext>
                 builder.Description = $"**Тебе выпало: {result}**";
             }
         }
-            
+
         await Context.Message.ReplyAsync(string.Empty, false, builder.Build());
     }
-        
+
     [Command("hand"), Alias("hide", "рука", "угадай", "угадать", "ру", "ручка", "лапа", "лапка", "спрячь",
             "guess")]
     [Summary("угадай в какой лапе)))")]
@@ -123,7 +125,7 @@ public class RandomModule : ModuleBase<SocketCommandContext>
         {
             builder.Description = $"**Итак, {Context.User.Mention}, я спрятал {thing})\nУгадай где))**";
         }
-            
+
         var leftButton = new ButtonBuilder();
         var rightButton = new ButtonBuilder();
 
@@ -137,7 +139,7 @@ public class RandomModule : ModuleBase<SocketCommandContext>
         await Context.Message.ReplyAsync(string.Empty, false, builder.Build(),
                 components: new ComponentBuilder().WithButton(leftButton).WithButton(rightButton).Build());
     }
-        
+
     private async Task ChooseHandButtonHandler(SocketMessageComponent component)
     {
         var builder = new EmbedBuilder { Color = Config.EmbedColor };
@@ -146,28 +148,28 @@ public class RandomModule : ModuleBase<SocketCommandContext>
         var rightButton = new ButtonBuilder();
 
         leftButton.Label = "Левая лапа";
-        leftButton.CustomId = "left" + component.Data.CustomId.Substring(4);
+        leftButton.CustomId = string.Concat("left", component.Data.CustomId.AsSpan(4));
         leftButton.Style = ButtonStyle.Primary;
         leftButton.IsDisabled = true;
         rightButton.Label = "Правая лапа";
-        rightButton.CustomId = "right" + component.Data.CustomId.Substring(5);
+        rightButton.CustomId = string.Concat("right", component.Data.CustomId.AsSpan(5));
         rightButton.Style = ButtonStyle.Success;
         rightButton.IsDisabled = true;
 
         if (component.Data.CustomId.StartsWith("left"))
         {
-            builder.Description = $"**{component.User.Mention}, думаешь, что в левой?))**\n**{(result == 0 ? $"Ладно, угадал))\nТвой приз: {component.Data.CustomId.Substring(4)}" : $"Ахахах, не угадал))\nТеперь {component.Data.CustomId.Substring(4)} - мой приз))")}**";
+            builder.Description = $"**{component.User.Mention}, думаешь, что в левой?))**\n**{(result == 0 ? $"Ладно, угадал))\nТвой приз: {component.Data.CustomId[4..]}" : $"Ахахах, не угадал))\nТеперь {component.Data.CustomId[4..]} - мой приз))")}**";
         }
         else if (component.Data.CustomId.StartsWith("right"))
         {
-            builder.Description = $"**{component.User.Mention}, думаешь, что в правой?))**\n**{(result == 1 ? $"Ладно, угадал))\nТвой приз: {component.Data.CustomId.Substring(5)}" : $"Ахахах, не угадал))\nТеперь {component.Data.CustomId.Substring(5)} - мой приз))")}**";
+            builder.Description = $"**{component.User.Mention}, думаешь, что в правой?))**\n**{(result == 1 ? $"Ладно, угадал))\nТвой приз: {component.Data.CustomId[5..]}" : $"Ахахах, не угадал))\nТеперь {component.Data.CustomId[5..]} - мой приз))")}**";
         }
         else
         {
             builder.Description = "**Даб, даб, не понял...**";
         }
-            
-        await component.UpdateAsync(x => { x.Components = new ComponentBuilder().WithButton(leftButton).WithButton(rightButton).Build(); });
+
+        await component.UpdateAsync(x => x.Components = new ComponentBuilder().WithButton(leftButton).WithButton(rightButton).Build());
         await component.FollowupAsync(string.Empty, new [] { builder.Build() });
     }
 }

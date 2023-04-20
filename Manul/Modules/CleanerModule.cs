@@ -32,7 +32,7 @@ public class CleanerModule : ModuleBase<SocketCommandContext>
             await SendReplyAsync("**Никак нет! Только по приказу начальства.**");
             return;
         }
-            
+
         IEnumerable<IMessage> messages;
 
         await Task.Delay(DelayBeforeGettingMessages);
@@ -48,7 +48,7 @@ public class CleanerModule : ModuleBase<SocketCommandContext>
         }
 
         var messagesList = messages.ToList();
-            
+
         if (messagesList.Count == 0)
         {
             await SendReplyAsync("**Противник не обнаружен!**");
@@ -80,7 +80,7 @@ public class CleanerModule : ModuleBase<SocketCommandContext>
         await Task.Delay(ReplyMessageDeletionDelay);
         await replyMessage.DeleteAsync();
     }
-        
+
     private static void ConstrainAmount(ref int amount)
     {
         if (amount > МахMessagesAmount)

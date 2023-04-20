@@ -15,7 +15,7 @@ public class LoggingService
         client.Log += LogAsync;
         commandService.Log += LogAsync;
     }
-        
+
     private static async Task LogAsync(LogMessage message)
     {
         var severity = message.Severity switch
@@ -28,18 +28,19 @@ public class LoggingService
             LogSeverity.Debug => LogEventLevel.Verbose,
             _ => LogEventLevel.Information
         };
-            
+
         Log.Write(severity, message.Exception, "{Source} -> {Message}", message.Source, message.Message);
         await Task.CompletedTask;
     }
-        
+
     public static void PrepareLogger()
     {
         Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
                 .Enrich.FromLogContext()
-                .WriteTo.Console(theme: AnsiConsoleTheme.Sixteen,
-                        outputTemplate: "[{Timestamp:HH:mm:ss}] ({Level:u3}) {Message:lj}{NewLine}{Exception}")
+                .WriteTo.Console(
+                        outputTemplate: "[{Timestamp:HH:mm:ss}] ({Level:u3}) {Message:lj}{NewLine}{Exception}",
+                        theme: AnsiConsoleTheme.Sixteen)
                 .CreateLogger();
     }
 }

@@ -15,7 +15,7 @@ public class VotingData
     public string Author { get; set; }
     public string CreationDate { get; set; }
     public string ExpiryDate { get; set; }
-    public Dictionary<int, string> Answers { get; set; } 
+    public Dictionary<int, string> Answers { get; set; }
     public Dictionary<string, List<int>> UserAnswers { get; set; }
 
     public VotingData(string name, string theme, Dictionary<int, string> answers, string author = "",
@@ -44,18 +44,18 @@ public class VotingData
 
         foreach (var (index, answer) in Answers)
         {
-            result.Append(string.Format(CultureInfo.InvariantCulture, $"{index}) {answer}\n\t\t"));
+            result.AppendFormat(CultureInfo.InvariantCulture, $"{index}) {answer}\n\t\t");
         }
 
         result.Remove(result.Length - 1, 1);    // Удаление лишней табуляции.
-        result.Append(string.Format(CultureInfo.InvariantCulture, "Users answers:\n\t\t"));
-            
+        result.AppendFormat(CultureInfo.InvariantCulture, "Users answers:\n\t\t");
+
         foreach (var (username, answers) in UserAnswers)
         {
-            result.Append(string.Format(CultureInfo.InvariantCulture, $"{username}: "
-                    + $"{answers.Aggregate(string.Empty, (current, answer) => current + $"{answer}, ")}"));
+            result.AppendFormat(CultureInfo.InvariantCulture, $"{username}: "
+                    + $"{answers.Aggregate(string.Empty, (current, answer) => current + $"{answer}, ")}");
             result.Remove(result.Length - 2, 2);    // Удаление запятой и пробела, находящихся после последнего варианта ответа.
-            result.Append(string.Format(CultureInfo.InvariantCulture, "\n\t\t"));
+            result.AppendFormat(CultureInfo.InvariantCulture, "\n\t\t");
         }
 
         return result.ToString();

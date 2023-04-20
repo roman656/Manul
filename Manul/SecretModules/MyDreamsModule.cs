@@ -37,7 +37,7 @@ public class MyDreamsModule : SecretModule
                 "**Напишите программу, переводящую N чисел в формат single. Пользователь вводит с клавиатуры количество чисел N, а также сами числа, разделяя их пробелами**",
                 "**Поздравляем! Мы готовы предложить Вам неоплачиваемую бесконечную стажировку в компании \"Miodenus Project MLG Team\" без последующего трудоустройства!!!**"
             }) {}
-    
+
     public override async Task SendReplyAsync(SocketCommandContext context)
     {
         var builder = new EmbedBuilder { Color = Config.EmbedColor };
@@ -45,7 +45,7 @@ public class MyDreamsModule : SecretModule
         if (VipUsers.ContainsKey(context.User.Username))
         {
             var answersList = VipUsers[context.User.Username];
-                
+
             builder.Description = answersList[_random.Next(answersList.Count)];
         }
         else
