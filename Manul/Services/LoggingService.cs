@@ -1,5 +1,3 @@
-namespace Manul.Services;
-
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
@@ -7,6 +5,8 @@ using Discord.WebSocket;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
+
+namespace Manul.Services;
 
 public class LoggingService
 {

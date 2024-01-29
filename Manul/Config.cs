@@ -1,6 +1,6 @@
-namespace Manul;
-
 using Discord;
+
+namespace Manul;
 
 public class Config
 {
