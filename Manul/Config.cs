@@ -1,4 +1,5 @@
 using Discord;
+using Newtonsoft.Json;
 
 namespace Manul;
 
@@ -8,7 +9,13 @@ public class Config
     public const string VotingDataFilename = "Voting.json";
     public const int MessageCacheSize = 500;
     public static readonly Color EmbedColor = 0xFF9900;
-    public const string Prefix = "!";
-    public const string GameActivityName = "!help";
-    public string Token { get; set; } = string.Empty;
+    
+    [JsonProperty(nameof(Prefix))]
+    public static string Prefix { get; set; } = "!";
+    
+    [JsonProperty(nameof(GameActivityName))]
+    public static string GameActivityName { get; set; } = "!help";
+    
+    [JsonProperty(nameof(Token))]
+    public static string Token { get; set; } = string.Empty;
 }

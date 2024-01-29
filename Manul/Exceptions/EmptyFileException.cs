@@ -1,6 +1,6 @@
-namespace Manul.Exceptions;
-
 using System;
+
+namespace Manul.Exceptions;
 
 [Serializable]
 public class EmptyFileException : Exception

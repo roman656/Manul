@@ -1,0 +1,5 @@
+{
+  "Token": "Put your token string here",
+  "Prefix": "!",
+  "GameActivityName": "!help"
+}

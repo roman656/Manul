@@ -22,7 +22,7 @@ public class StartupService
 
     public async Task StartAsync()
     {
-        await _client.LoginAsync(TokenType.Bot, Program.Config.Token);
+        await _client.LoginAsync(TokenType.Bot, Config.Token);
         await _client.SetGameAsync(Config.GameActivityName);
         await _client.StartAsync();
         await _commandService.AddModulesAsync(Assembly.GetEntryAssembly(), _provider);

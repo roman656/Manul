@@ -1,6 +1,4 @@
-﻿namespace Manul;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
@@ -8,31 +6,35 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-using Exceptions;
-using SecretModules;
-using Services;
+using Manul.Exceptions;
+using Manul.SecretModules;
+using Manul.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Serilog;
 
+namespace Manul;
+
 public static class Program
 {
     public static Config Config { get; set; }
-    public static readonly List<VotingData> VotingData = new ();
-    public static readonly List<SecretModule> SecretModules = new ()
-    {
+    public static readonly List<VotingData> VotingData = [];
+    public static readonly List<SecretModule> SecretModules =
+    [
         new GreetingsModule(),
         new WolfModule(),
         new MyDreamsModule()
-    };
+    ];
 
     public static void Main()
     {
         try
         {
             LoggingService.PrepareLogger();
+            
             CheckFile(Config.ConfigFilename);
             Config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(Config.ConfigFilename));
+            
             MainAsync().GetAwaiter().GetResult();
         }
         catch (Exception exception)
@@ -54,18 +56,18 @@ public static class Program
         await Task.Delay(Timeout.Infinite);
     }
 
-    private static void CheckFile(in string filename)
+    private static void CheckFile(string filename)
     {
         var fileInfo = new FileInfo(filename);
 
         if (!fileInfo.Exists)
         {
-            throw new FileNotFoundException($"File {filename} not found.");
+            throw new FileNotFoundException($"File {filename} not found");
         }
 
         if (fileInfo.Length <= 0)
         {
-            throw new EmptyFileException($"File {filename} is empty.");
+            throw new EmptyFileException($"File {filename} is empty");
         }
     }
 
