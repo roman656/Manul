@@ -1,3 +1,4 @@
+using System.IO;
 using Discord;
 using Newtonsoft.Json;
 
@@ -5,7 +6,7 @@ namespace Manul;
 
 public class Config
 {
-    public const string ConfigFilename = "Config.json";
+    private const string ConfigFilename = "Config.json";
     public const string VotingDataFilename = "Voting.json";
     public const int MessageCacheSize = 500;
     public static readonly Color EmbedColor = 0xFF9900;
@@ -18,4 +19,10 @@ public class Config
     
     [JsonProperty(nameof(Token))]
     public static string Token { get; set; } = string.Empty;
+
+    public static void Upload()
+    {
+        Utils.CheckFile(ConfigFilename);
+        var config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(ConfigFilename));
+    }
 }

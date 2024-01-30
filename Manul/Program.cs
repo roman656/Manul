@@ -1,23 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-using Manul.Exceptions;
 using Manul.SecretModules;
 using Manul.Services;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
 using Serilog;
 
 namespace Manul;
 
 public static class Program
 {
-    public static Config Config { get; set; }
     public static readonly List<VotingData> VotingData = [];
     public static readonly List<SecretModule> SecretModules =
     [
@@ -31,10 +27,7 @@ public static class Program
         try
         {
             LoggingService.PrepareLogger();
-            
-            CheckFile(Config.ConfigFilename);
-            Config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(Config.ConfigFilename));
-            
+            Config.Upload();
             MainAsync().GetAwaiter().GetResult();
         }
         catch (Exception exception)
@@ -54,21 +47,6 @@ public static class Program
 
         await provider.GetRequiredService<StartupService>().StartAsync();
         await Task.Delay(Timeout.Infinite);
-    }
-
-    private static void CheckFile(string filename)
-    {
-        var fileInfo = new FileInfo(filename);
-
-        if (!fileInfo.Exists)
-        {
-            throw new FileNotFoundException($"File {filename} not found");
-        }
-
-        if (fileInfo.Length <= 0)
-        {
-            throw new EmptyFileException($"File {filename} is empty");
-        }
     }
 
     private static void ConfigureServices(IServiceCollection services)
