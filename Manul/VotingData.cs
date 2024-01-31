@@ -1,14 +1,14 @@
-﻿namespace Manul;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 
+namespace Manul;
+
 public class VotingData
 {
-    private const int DefaultDurationInMinutes = 1440;    // 24 часа.
+    private const int DefaultDurationInMinutes = 60 * 24;
     private static int _index;
     public string Name { get; set; }
     public string Theme { get; set; }

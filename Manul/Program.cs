@@ -32,7 +32,11 @@ public static class Program
         }
         catch (Exception exception)
         {
-            Log.Fatal("{Message}",exception.Message);
+            Log.Fatal("{Message}", exception.Message);
+        }
+        finally
+        {
+            Log.CloseAndFlush();
         }
     }
 

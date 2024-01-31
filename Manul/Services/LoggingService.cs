@@ -16,18 +16,20 @@ public class LoggingService
         commandService.Log += LogAsync;
     }
 
+    private static LogEventLevel GetSerilogSeverity(LogSeverity discordSeverity) => discordSeverity switch
+    {
+        LogSeverity.Critical => LogEventLevel.Fatal,
+        LogSeverity.Error => LogEventLevel.Error,
+        LogSeverity.Warning => LogEventLevel.Warning,
+        LogSeverity.Info => LogEventLevel.Information,
+        LogSeverity.Verbose => LogEventLevel.Debug,
+        LogSeverity.Debug => LogEventLevel.Verbose,
+        _ => LogEventLevel.Information
+    };
+
     private static async Task LogAsync(LogMessage message)
     {
-        var severity = message.Severity switch
-        {
-            LogSeverity.Critical => LogEventLevel.Fatal,
-            LogSeverity.Error => LogEventLevel.Error,
-            LogSeverity.Warning => LogEventLevel.Warning,
-            LogSeverity.Info => LogEventLevel.Information,
-            LogSeverity.Verbose => LogEventLevel.Debug,
-            LogSeverity.Debug => LogEventLevel.Verbose,
-            _ => LogEventLevel.Information
-        };
+        var severity = GetSerilogSeverity(message.Severity);
 
         Log.Write(severity, message.Exception, "{Source} -> {Message}", message.Source, message.Message);
         await Task.CompletedTask;
@@ -39,8 +41,11 @@ public class LoggingService
                 .MinimumLevel.Verbose()
                 .Enrich.FromLogContext()
                 .WriteTo.Console(
-                        outputTemplate: "[{Timestamp:HH:mm:ss}] ({Level:u3}) {Message:lj}{NewLine}{Exception}",
+                        outputTemplate: "[{Timestamp:HH:mm:ss.fff}] ({Level:u3}) {Message:lj}{NewLine}{Exception}",
                         theme: AnsiConsoleTheme.Sixteen)
+                .WriteTo.File(
+                        path: "logs/log.txt",
+                        outputTemplate: "[{Timestamp:yyyy-MM-dd HH:mm:ss.fff}] ({Level:u3}) {Message:lj}{NewLine}{Exception}")
                 .CreateLogger();
     }
 }
