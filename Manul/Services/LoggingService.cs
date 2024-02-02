@@ -45,7 +45,10 @@ public class LoggingService
                         theme: AnsiConsoleTheme.Sixteen)
                 .WriteTo.File(
                         path: "logs/log.txt",
-                        outputTemplate: "[{Timestamp:yyyy-MM-dd HH:mm:ss.fff}] ({Level:u3}) {Message:lj}{NewLine}{Exception}")
+                        fileSizeLimitBytes: 50 * 1024 * 1024,
+                        rollOnFileSizeLimit: true,
+                        retainedFileCountLimit: 5,
+                        outputTemplate: "[{Timestamp:dd-MM-yyyy HH:mm:ss.fff}] ({Level:u5}) {Message:lj}{NewLine}{Exception}")
                 .CreateLogger();
     }
 }
