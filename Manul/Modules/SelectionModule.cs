@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
@@ -9,7 +11,6 @@ namespace Manul.Modules;
 public class SelectionModule : ModuleBase<SocketCommandContext>
 {
     private readonly Random _random = new ();
-    private readonly string[] _separators = [";", ",", "или", "либо", "ИЛИ", "ЛИБО", "Или", "Либо"];
     private readonly Dictionary<string, string> _specialUsersAnswers = new()
     {
         { "null_me", "Лисичка, я" },
@@ -28,15 +29,15 @@ public class SelectionModule : ModuleBase<SocketCommandContext>
         }
         else
         {
-            var answers = input.Trim().Split(_separators, StringSplitOptions.RemoveEmptyEntries);
+            var answers = GetPossibleAnswers(input.Trim());
 
-            if (answers.Length == 0)
+            if (answers.Count == 0)
             {
                 builder.Description = "**А я кто, чтоб такие ребусы обдумывать?))**";
             }
             else
             {
-                var selectedAnswer = answers[_random.Next(0, answers.Length)].Trim();
+                var selectedAnswer = answers[_random.Next(0, answers.Count)];
                 
                 if (_specialUsersAnswers.TryGetValue(Context.User.Username, out var specialUserAnswer))
                 {
@@ -50,5 +51,29 @@ public class SelectionModule : ModuleBase<SocketCommandContext>
         }
 
         await Context.Message.ReplyAsync(embed: builder.Build());
+    }
+
+    private static List<string> GetPossibleAnswers(string input)
+    {
+        const string separatorWordsPattern = "[^\\wА-Яа-яЁё\"\'](или|либо)[^\\wА-Яа-яЁё\"\']";
+        var punctuation = input
+                .Where(symbol => char.IsPunctuation(symbol) && symbol != '"' && symbol != '\'')
+                .Distinct()
+                .ToArray();
+        var temp = input
+                .Split(punctuation,StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                .Distinct()
+                .ToList();
+        var answers = new List<string>();
+
+        foreach (var tempAnswer in temp)
+        {
+            answers.AddRange(Regex.Split(tempAnswer, separatorWordsPattern, RegexOptions.IgnoreCase).Distinct());
+        }
+
+        answers.RemoveAll(x => x.Equals("или", StringComparison.CurrentCultureIgnoreCase) ||
+                               x.Equals("либо", StringComparison.CurrentCultureIgnoreCase));
+
+        return answers;
     }
 }
