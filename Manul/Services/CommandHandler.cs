@@ -1,11 +1,11 @@
-namespace Manul.Services;
-
 using System;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using Serilog;
+
+namespace Manul.Services;
 
 public class CommandHandler
 {

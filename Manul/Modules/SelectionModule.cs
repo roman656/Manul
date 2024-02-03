@@ -1,18 +1,24 @@
-﻿namespace Manul.Modules;
-
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 
+namespace Manul.Modules;
+
 public class SelectionModule : ModuleBase<SocketCommandContext>
 {
     private readonly Random _random = new ();
-    private readonly string[] _separators = { "[", ";", ",", "]", "или", "либо", "ИЛИ", "ЛИБО", "Или", "Либо" };
+    private readonly string[] _separators = [";", ",", "или", "либо", "ИЛИ", "ЛИБО", "Или", "Либо"];
+    private readonly Dictionary<string, string> _specialUsersAnswers = new()
+    {
+        { "null_me", "Лисичка, я" },
+        { "poormercymain", "Саныч, я" }
+    };
 
     [Command("select"), Alias("choose", "sel", "ch", "выбери", "выбор", "выбирай", "выбрать", "реши")]
     [Summary("принимаю ответственные решения за тебя)")]
-    public async Task SelectAsync([Summary("варианты (из чего выбирать)")][RemainderAttribute] string input = "")
+    public async Task SelectAsync([Summary("варианты (из чего выбирать)")][Remainder] string input = "")
     {
         var builder = new EmbedBuilder { Color = Config.EmbedColor };
 
@@ -30,10 +36,19 @@ public class SelectionModule : ModuleBase<SocketCommandContext>
             }
             else
             {
-                builder.Description = $"**{(Context.User.Username == "PoorMercymain" ? "Саныч, я" : Context.User.Username == "null me" ? "Лисичка, я" : "Я")} думаю {answers[_random.Next(0, answers.Length)].Trim()}**";
+                var selectedAnswer = answers[_random.Next(0, answers.Length)].Trim();
+                
+                if (_specialUsersAnswers.TryGetValue(Context.User.Username, out var specialUserAnswer))
+                {
+                    builder.Description = $"**{specialUserAnswer} думаю {selectedAnswer}**";
+                }
+                else
+                {
+                    builder.Description = $"**Я думаю {selectedAnswer}**";
+                }
             }
         }
 
-        await Context.Message.ReplyAsync(string.Empty, false, builder.Build());
+        await Context.Message.ReplyAsync(embed: builder.Build());
     }
 }

@@ -1,6 +1,4 @@
-﻿using System.Runtime.Serialization.Formatters.Binary;
-
-namespace Manul.Modules;
+﻿namespace Manul.Modules;
 
 using System.IO;
 using System.Net.Http;
