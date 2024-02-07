@@ -29,11 +29,15 @@ public class SelectionModule : ModuleBase<SocketCommandContext>
         }
         else
         {
-            var answers = GetPossibleAnswers(input.Trim());
+            var answers = GetPossibleAnswers(input);
 
             if (answers.Count == 0)
             {
                 builder.Description = "**А я кто, чтоб такие ребусы обдумывать?))**";
+            }
+            else if (answers.Count == 1)
+            {
+                builder.Description = "**Я думаю, ответ очевиден**";
             }
             else
             {
@@ -52,27 +56,26 @@ public class SelectionModule : ModuleBase<SocketCommandContext>
 
         await Context.Message.ReplyAsync(embed: builder.Build());
     }
-
+    
     private static List<string> GetPossibleAnswers(string input)
     {
-        const string separatorWordsPattern = "[^\\wА-Яа-яЁё\"\'](или|либо)[^\\wА-Яа-яЁё\"\']";
-        var punctuation = input
-                .Where(symbol => char.IsPunctuation(symbol) && symbol != '"' && symbol != '\'')
+        var regex = new Regex(
+                """^(?:или|либо|or)|(?:или|либо|or)$|[^\wА-Яа-яЁё\"\'\`?!.:]+(?:или|либо|or)[^\wА-Яа-яЁё\"\'\`?!.:]+(?:(?:или|либо|or)[^\wА-Яа-яЁё\"\'\`?!.:])*|\s*[,;\\\/|]\s*""",
+                RegexOptions.IgnoreCase);
+        var punctuationAndWhiteSpace = input
+                .Where(symbol => (char.IsPunctuation(symbol) && symbol != '"' && symbol != '\'') ||
+                                  char.IsWhiteSpace(symbol))
                 .Distinct()
                 .ToArray();
-        var temp = input
-                .Split(punctuation,StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+    
+        input = input.Trim(punctuationAndWhiteSpace);
+    
+        var answers = regex
+                .Split(input)
+                .Select(x => x.Trim())
+                .Where(x => !string.IsNullOrWhiteSpace(x))
                 .Distinct()
                 .ToList();
-        var answers = new List<string>();
-
-        foreach (var tempAnswer in temp)
-        {
-            answers.AddRange(Regex.Split(tempAnswer, separatorWordsPattern, RegexOptions.IgnoreCase).Distinct());
-        }
-
-        answers.RemoveAll(x => x.Equals("или", StringComparison.CurrentCultureIgnoreCase) ||
-                               x.Equals("либо", StringComparison.CurrentCultureIgnoreCase));
 
         return answers;
     }
