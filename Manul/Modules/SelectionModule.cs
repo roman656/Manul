@@ -37,7 +37,7 @@ public class SelectionModule : ModuleBase<SocketCommandContext>
             }
             else if (answers.Count == 1)
             {
-                builder.Description = "**Я думаю, ответ очевиден**";
+                builder.Description = "**Ответ настолько очевиден, что я даже не ответ...**";
             }
             else
             {
@@ -62,13 +62,8 @@ public class SelectionModule : ModuleBase<SocketCommandContext>
         var regex = new Regex(
                 """^(?:или|либо|or)|(?:или|либо|or)$|[^\wА-Яа-яЁё\"\'\`?!.:]+(?:или|либо|or)[^\wА-Яа-яЁё\"\'\`?!.:]+(?:(?:или|либо|or)[^\wА-Яа-яЁё\"\'\`?!.:])*|\s*[,;\\\/|]\s*""",
                 RegexOptions.IgnoreCase);
-        var punctuationAndWhiteSpace = input
-                .Where(symbol => (char.IsPunctuation(symbol) && symbol != '"' && symbol != '\'') ||
-                                  char.IsWhiteSpace(symbol))
-                .Distinct()
-                .ToArray();
     
-        input = input.Trim(punctuationAndWhiteSpace);
+        input = input.Trim();
     
         var answers = regex
                 .Split(input)
