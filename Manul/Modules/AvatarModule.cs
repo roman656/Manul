@@ -15,8 +15,8 @@ public class AvatarModule : ModuleBase<SocketCommandContext>
     private readonly Random _random = new ();
     private static readonly Dictionary<string, List<string>> VipUsers = new ()
     {
-        { "pomaxpen", new List<string> { "**А может тебе ещё спину вареньем намазать?))**", "**Отказано в доступе**" } },
-        { "submarinecap", new List<string> { "**1113**" } }
+        { "pomaxpen", ["**А может тебе ещё спину вареньем намазать?))**", "**Отказано в доступе**"] },
+        { "kirchq", ["**1113**"] }
     };
 
     [Command("avatar")]

@@ -46,15 +46,15 @@ public class RandomModule : ModuleBase<SocketCommandContext>
 
         if (minValue != string.Empty && !int.TryParse(minValue, out intMinValue))
         {
-            builder.Description = "**Вместо минимального значения я вижу какой-то мусор.**";
+            builder.Description = "**Вместо минимального значения я вижу какой-то мусор**";
         }
         else if (maxValue != string.Empty && !int.TryParse(maxValue, out intMaxValue))
         {
-            builder.Description = "**Вместо максимального значения я вижу какой-то мусор.**";
+            builder.Description = "**Вместо максимального значения я вижу какой-то мусор**";
         }
         else if (amount != string.Empty && !int.TryParse(amount, out intAmount))
         {
-            builder.Description = "**Вместо количества чисел я вижу некий HOPEWELL, что переводится как помойка.**";
+            builder.Description = "**Вместо количества чисел я вижу некий HOPEWELL, что переводится как помойка**";
         }
         else if (intMinValue == intMaxValue)
         {
@@ -66,7 +66,7 @@ public class RandomModule : ModuleBase<SocketCommandContext>
         }
         else if (intAmount > MaxAmount)
         {
-            builder.Description = $"**Слишком много чисел ты просишь... Максимум {MaxAmount} я готов дать.**";
+            builder.Description = $"**Слишком много чисел ты просишь... Максимум {MaxAmount} я готов дать**";
         }
         else if (intAmount <= 0)
         {
@@ -86,16 +86,16 @@ public class RandomModule : ModuleBase<SocketCommandContext>
                     : $"{_random.Next(intMinValue, intMaxValue)}, ");
             }
 
-            if (Context.User.Username == "submarinecap" && _random.Next(100) + 1 <= 50)
+            if (Context.User.Username == "kirchq" && _random.Next(100) + 1 <= 50)
             {
                 builder.Description = "**Тебе выпало: 1113**";
             }
-            else if (Context.User.Username == "null me" && _nullMeCounter == 0)
+            else if (Context.User.Username == "null_me" && _nullMeCounter == 0)
             {
                 builder.Description = "**Тебе выпало: 1**";
                 _nullMeCounter++;
             }
-            else if (Context.User.Username == "null me" && _nullMeCounter == 1)
+            else if (Context.User.Username == "null_me" && _nullMeCounter == 1)
             {
                 builder.Description = "**Тебе выпало: 4**";
                 _nullMeCounter++;

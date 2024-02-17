@@ -53,7 +53,7 @@ public class CommandHandler
 
         if (HasMessageBotPrefixes(message, ref argumentPosition))
         {
-            if (context.User.Username == "MOMIMU")
+            if (context.User.Username == "_momimu_")
             {
                 var builder = new EmbedBuilder { Color = Config.EmbedColor, Description = "**Милорд**" };
                 await context.Message.ReplyAsync(string.Empty, false, builder.Build());

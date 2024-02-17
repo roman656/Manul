@@ -11,7 +11,7 @@ public class MyDreamsModule : SecretModule
     private readonly Random _random = new ();
     private static readonly Dictionary<string, List<string>> VipUsers = new ()
     {
-        { "null me", new List<string>
+        { "null_me", new List<string>
             {
                 "**Весьма занятный бред))**",
                 "**Секрет вкусных пельменей от Шлёпы... Хорошие пельмени — это очень, очень вкусно! Вроде нужно много мяса...**",
