@@ -37,7 +37,7 @@ public class SelectionModule : ModuleBase<SocketCommandContext>
             }
             else if (answers.Count == 1)
             {
-                builder.Description = "**Ответ настолько очевиден, что я даже не ответ...**";
+                builder.Description = "**Я думаю, ответ очевиден...**";
             }
             else
             {
