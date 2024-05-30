@@ -1,5 +1,6 @@
 ﻿namespace Manul.Modules;
 
+using System.Diagnostics;
 using Discord.Addons.Music.Source;
 using Discord.Audio;
 using System.Collections.Generic;
@@ -34,7 +35,7 @@ public class MusicModule : ModuleBase<SocketCommandContext>
         { "ШИРОКАЯ музыка 🎹", "https://youtu.be/M2aQFtWNXRA" }
     };
     private readonly Dictionary<ulong, (AudioPlayer player, Queue<AudioTrack> queue)> _serverAudioPlayers = new();
-
+    
     private void AddNewAudioPlayer(ulong serverId)
     {
         if (!_serverAudioPlayers.ContainsKey(serverId))
@@ -99,10 +100,56 @@ public class MusicModule : ModuleBase<SocketCommandContext>
 
         var audioClient = await voiceChannel.ConnectAsync();
         var wellFormedUri = Uri.IsWellFormedUriString(query, UriKind.Absolute);
-
+        var isYouTubeUri = (query?.Contains("youtube")  ?? false) || (query?.Contains("youtu.be")  ?? false);
+        
         if (!wellFormedUri)
         {
             query = Translit(query);    // костыль для +/- нормального поиска на русском.
+        }
+        else if (!isYouTubeUri)
+        {
+            var sunoSongId = ExtractSunoSongId(query);
+
+            if (!string.IsNullOrEmpty(sunoSongId))
+            {
+                query = $"https://cdn1.suno.ai/{sunoSongId}.mp3";
+            }
+
+            var ffmpegCommand = $"-c \"youtube-dl -o - {query} | ffmpeg -loglevel panic -i pipe:0 -ac 2 -f s16le -ar 48000 pipe:1\"";
+            var ffmpegProcess = Process.Start(new ProcessStartInfo
+            {
+                FileName = "/bin/bash",
+                Arguments = ffmpegCommand,
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            });
+
+            if (ffmpegProcess == null)
+            {
+                builder.Description = $"**{Context.User.Mention} поставил песню, но я помер...**";
+                await Context.Message.ReplyAsync(string.Empty, false, builder.Build());
+                
+                return;
+            }
+            
+            builder.Description = $"**{Context.User.Mention} поставил:\n*{query}*\n{_commentAnswers[_random.Next(_commentAnswers.Length)]}**";
+            await Context.Message.ReplyAsync(string.Empty, false, builder.Build());
+
+            using (var output = ffmpegProcess.StandardOutput.BaseStream)
+            using (var discord = audioClient.CreatePCMStream(AudioApplication.Music))
+            {
+                try
+                {
+                    await output.CopyToAsync(discord);
+                }
+                finally
+                {
+                    await discord.FlushAsync();
+                }
+            }
+            
+            return;
         }
 
         var tracks = await TrackLoader.LoadAudioTrack(query, fromUrl: wellFormedUri);
@@ -119,6 +166,13 @@ public class MusicModule : ModuleBase<SocketCommandContext>
         player.SetAudioClient(audioClient);
 
         await player.StartTrackAsync(firstTrack);
+    }
+    
+    private static string ExtractSunoSongId(string shareLink)
+    {
+        const string songPrefix = "https://suno.com/song/";
+
+        return shareLink.StartsWith(songPrefix) ? shareLink.Substring(songPrefix.Length) : string.Empty;
     }
 
     [Command("stop"), Alias("выключай", "вырубай", "стоп", "довольно", "хватит")]
