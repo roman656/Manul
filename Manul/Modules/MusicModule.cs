@@ -1,4 +1,7 @@
-﻿namespace Manul.Modules;
+﻿using Discord.Addons.Music.Exception;
+using Serilog;
+
+namespace Manul.Modules;
 
 using System.Diagnostics;
 using Discord.Addons.Music.Source;
@@ -13,8 +16,27 @@ using Discord.Addons.Music.Player;
 using Discord.Commands;
 using Discord.WebSocket;
 
+internal class ServerFfmpegProcessStorage
+{
+    private readonly Dictionary<ulong, Process> _processes = new();
+
+    public void AddProcess(ulong serverId, Process process)
+    {
+        if (!_processes.ContainsKey(serverId))
+        {
+            _processes[serverId] = process;
+        }
+    }
+
+    public Process RemoveProcess(ulong serverId)
+    {
+        return !_processes.Remove(serverId, out var process) ? null : process;
+    }
+}
+
 public class MusicModule : ModuleBase<SocketCommandContext>
 {
+    private static readonly ServerFfmpegProcessStorage ServerFfmpegProcesses = new ();
     private readonly Random _random = new();
     private readonly string[] _commentAnswers =
     {
@@ -38,27 +60,38 @@ public class MusicModule : ModuleBase<SocketCommandContext>
     
     private void AddNewAudioPlayer(ulong serverId)
     {
-        if (!_serverAudioPlayers.ContainsKey(serverId))
+        if (_serverAudioPlayers.ContainsKey(serverId))
         {
-            var player = new AudioPlayer();
-            var queue = new Queue<AudioTrack>();
-
-            player.OnTrackStartAsync += OnTrackStartAsync;
-            player.OnTrackEndAsync += OnTrackEndAsync;
-
-            _serverAudioPlayers.Add(serverId, (player, queue));
+            return;
         }
+        
+        var player = new AudioPlayer();
+        var queue = new Queue<AudioTrack>();
+
+        player.OnTrackStartAsync += OnTrackStartAsync;
+        player.OnTrackEndAsync += OnTrackEndAsync;
+        player.OnTrackErrorAsync += OnTrackErrorAsync;
+
+        _serverAudioPlayers.Add(serverId, (player, queue));
+    }
+
+    private static Task OnTrackErrorAsync(IAudioClient audioclient, IAudioSource track, TrackErrorException exception)
+    {
+        Log.Error("Track error: {trackTitle}", track.Info.Title);
+        Log.Error("{trackException}", exception);
+        
+        return Task.CompletedTask;
     }
 
     private static Task OnTrackStartAsync(IAudioClient audioClient, IAudioSource track)
     {
-        Console.WriteLine("Track start! " + track.Info.Title);
+        Log.Debug("Track started: {trackTitle}", track.Info.Title);
         return Task.CompletedTask;
     }
 
     private static async Task OnTrackEndAsync(IAudioClient audioClient, IAudioSource track)
     {
-        Console.WriteLine("Track end! " + track.Info.Title);
+        Log.Debug("Track finished: {trackTitle}", track.Info.Title);
         await audioClient.StopAsync();
     }
 
@@ -114,6 +147,18 @@ public class MusicModule : ModuleBase<SocketCommandContext>
             {
                 query = $"https://cdn1.suno.ai/{sunoSongId}.mp3";
             }
+            
+            var serverId = guild.Id;
+
+            // Terminate any existing process
+            var existingProcess = ServerFfmpegProcesses.RemoveProcess(serverId);
+        
+            if (existingProcess != null)
+            {
+                existingProcess.Kill(true);
+                await existingProcess.WaitForExitAsync();
+                existingProcess.Dispose();
+            }
 
             var ffmpegCommand = $"-c \"youtube-dl -o - {query} | ffmpeg -loglevel panic -i pipe:0 -ac 2 -f s16le -ar 48000 pipe:1\"";
             var ffmpegProcess = Process.Start(new ProcessStartInfo
@@ -133,6 +178,8 @@ public class MusicModule : ModuleBase<SocketCommandContext>
                 return;
             }
             
+            ServerFfmpegProcesses.AddProcess(serverId, ffmpegProcess);
+            
             builder.Description = $"**{Context.User.Mention} поставил:\n*{query}*\n{_commentAnswers[_random.Next(_commentAnswers.Length)]}**";
             await Context.Message.ReplyAsync(string.Empty, false, builder.Build());
 
@@ -146,8 +193,17 @@ public class MusicModule : ModuleBase<SocketCommandContext>
                 finally
                 {
                     await discord.FlushAsync();
+                    // Close the standard output and error to signal completion
+                    ffmpegProcess.StandardOutput.Close();
+                    ffmpegProcess.StandardError.Close();
                 }
             }
+            
+            // Wait for ffmpeg process to exit to ensure it has finished
+            ServerFfmpegProcesses.RemoveProcess(serverId);
+            ffmpegProcess.Kill(true);
+            await ffmpegProcess.WaitForExitAsync();
+            ffmpegProcess.Dispose();
             
             return;
         }
@@ -206,6 +262,15 @@ public class MusicModule : ModuleBase<SocketCommandContext>
         player.SetAudioClient(audioClient);
 
         await audioClient.StopAsync();
+
+        var existingProcess = ServerFfmpegProcesses.RemoveProcess(guild.Id);
+        
+        if (existingProcess != null)
+        {
+            existingProcess.Kill(true);
+            await existingProcess.WaitForExitAsync();
+            existingProcess.Dispose();
+        }
     }
 
     private static string Translit(string str)
