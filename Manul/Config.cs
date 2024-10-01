@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using Discord;
 using Newtonsoft.Json;
@@ -22,7 +23,11 @@ public class Config
 
     public static void Upload()
     {
-        Utils.CheckFile(ConfigFilename);
-        var config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(ConfigFilename));
+        JsonConvert.DeserializeObject<Config>(File.ReadAllText(ConfigFilename));
+
+        if (Token.Length == 0)
+        {
+            throw new ArgumentException($"There is no token specified in the configuration file: {ConfigFilename}");
+        }
     }
 }

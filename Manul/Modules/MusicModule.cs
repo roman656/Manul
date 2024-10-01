@@ -49,7 +49,7 @@ public class MusicModule : ModuleBase<SocketCommandContext>
         { "радио бандитов 📻", "https://youtu.be/Nhrhb9QPCjE" },
         { "Барановичи 🐏", "https://youtu.be/BO1nxYNgg7M" },
         { "шрексофон 🎷", "https://youtu.be/6u28g47nlPQ" },
-        { "Dr. Livesey walking 🚶🚶🚶", "https://youtu.be/tt8Vy42WHVY" },
+        // { "Dr. Livesey walking 🚶🚶🚶", "https://youtu.be/tt8Vy42WHVY" },
         { "лалахей 🎤", "https://youtu.be/mBQGYdDitgc" },
         { "спидран 🏎", "https://youtu.be/JseIaLyGNuc" },
         { "я не поеду в Китай 🐼", "https://youtu.be/RdbWairj0no" },

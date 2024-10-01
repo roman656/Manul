@@ -1,14 +1,5 @@
 ﻿namespace Manul.SecretModules;
 
-public class WolfModule : SecretModule
-{
-    public WolfModule() : base(
-            keywords: new[]
-            {
-                "ауф", "безумно можно"
-            },
-            answers: new[]
-            {
-                "☝🐺"
-            }) {}
-}
+public class WolfModule() : SecretModule(
+    keywords: [ "ауф", "безумно можно", "auf" ],
+    answers: [ "☝🐺" ]);

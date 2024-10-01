@@ -1,21 +1,15 @@
-﻿namespace Manul.SecretModules;
-
-using System;
+﻿using System;
 using System.Linq;
 using Discord;
 using System.Threading.Tasks;
 using Discord.Commands;
 
-public abstract class SecretModule
-{
-    protected readonly string[] Keywords;
-    protected readonly string[] Answers;
+namespace Manul.SecretModules;
 
-    protected SecretModule(string[] keywords, string[] answers)
-    {
-        Keywords = keywords;
-        Answers = answers;
-    }
+public abstract class SecretModule(string[] keywords, string[] answers)
+{
+    protected readonly string[] Keywords = keywords;
+    protected readonly string[] Answers = answers;
 
     public virtual bool WasCalled(string message) => Keywords.Any(message.StartsWith);
 
