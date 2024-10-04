@@ -44,7 +44,8 @@ public class GreetingsModule() : SecretModule(
         var random = new Random();
         var builder = new EmbedBuilder { Color = Config.EmbedColor };
 
-        if (VipUsers.TryGetValue(context.User.Username, out var answersList) && random.Next(100) < PersonalizedResponseRate)
+        if (VipUsers.TryGetValue(context.User.Username, out var answersList)
+                && random.Next(100) < PersonalizedResponseRate)
         {
             builder.Description = answersList[random.Next(answersList.Count)];
         }

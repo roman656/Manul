@@ -1,5 +1,7 @@
 {
   "Token": "Put your token string here",
   "Prefix": "!",
-  "GameActivityName": "!help"
+  "GameActivityName": "!help",
+  "LogToFile": false,
+  "LogToConsole": true
 }

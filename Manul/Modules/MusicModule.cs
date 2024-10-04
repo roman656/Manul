@@ -95,7 +95,7 @@ public class MusicModule : ModuleBase<SocketCommandContext>
         await audioClient.StopAsync();
     }
 
-    [Command("music"), Alias("play", "музыка", "песня", "аудио", "audio", "song", "трек", "песню",
+    [Command("music", RunMode = RunMode.Async), Alias("play", "музыка", "песня", "аудио", "audio", "song", "трек", "песню",
             "шарманка", "поставь", "запусти", "играй", "бард", "мелодия", "понеслась", "сыграй")]
     [Summary("не стреляйте в пианиста – он играет, как умеет)")]
     public async Task MusicAsync([Summary("ссылка на песню или запрос словами")][Remainder] string query = "")

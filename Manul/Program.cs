@@ -22,22 +22,49 @@ public static class Program
         new MyDreamsModule()
     ];
 
-    public static void Main()
+    public static int Main(string[] args)
     {
+        if ((args.Length > 1) || ((args.Length == 1) && args[0].Equals("--help")))
+        {
+            Console.WriteLine("Usage: Manul [configFilePath]");
+            return (args.Length > 1) ? 1 : 0;
+        }
+        
+        var configFilePath = (args.Length == 1) ? args[0] : null;
+
+        if (!SetupConfigAndLogger(configFilePath)) { return 2; }
+        
         try
         {
-            LoggingService.PrepareLogger();
-            Config.Upload();
             MainAsync().GetAwaiter().GetResult();
         }
         catch (Exception exception)
         {
             Log.Fatal("{Message}", exception.Message);
+            return 3;
         }
         finally
         {
             Log.CloseAndFlush();
         }
+
+        return 0;
+    }
+
+    private static bool SetupConfigAndLogger(string configFilePath)
+    {
+        try
+        {
+            Config.Upload(configFilePath);
+            LoggingService.PrepareLogger(Config.LogToConsole, Config.LogToFile);
+        }
+        catch (Exception exception)
+        {
+            Console.Error.WriteLine(exception);
+            return false;
+        }
+
+        return true;
     }
 
     private static async Task MainAsync()

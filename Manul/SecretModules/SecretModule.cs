@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
-using Discord;
 using System.Threading.Tasks;
+using Discord;
 using Discord.Commands;
 
 namespace Manul.SecretModules;

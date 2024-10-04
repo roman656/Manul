@@ -35,20 +35,28 @@ public class LoggingService
         await Task.CompletedTask;
     }
 
-    public static void PrepareLogger()
+    public static void PrepareLogger(bool logToConsole, bool logToFile)
     {
-        Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Verbose()
-                .Enrich.FromLogContext()
-                .WriteTo.Console(
-                        outputTemplate: "[{Timestamp:HH:mm:ss.fff}] ({Level:u3}) {Message:lj}{NewLine}{Exception}",
-                        theme: AnsiConsoleTheme.Sixteen)
-                .WriteTo.File(
-                        path: "logs/log.txt",
-                        fileSizeLimitBytes: 50 * 1024 * 1024,
-                        rollOnFileSizeLimit: true,
-                        retainedFileCountLimit: 5,
-                        outputTemplate: "[{Timestamp:dd-MM-yyyy HH:mm:ss.fff}] ({Level:u5}) {Message:lj}{NewLine}{Exception}")
-                .CreateLogger();
+        var configuration = new LoggerConfiguration().MinimumLevel.Verbose().Enrich.FromLogContext();
+        
+        if (logToConsole)
+        {
+            configuration.WriteTo.Console(
+                    outputTemplate: "[{Timestamp:HH:mm:ss.fff}] ({Level:u3}) {Message:lj}{NewLine}{Exception}",
+                    theme: AnsiConsoleTheme.Sixteen);
+        }
+
+        if (logToFile)
+        {
+            configuration.WriteTo.File(
+                    path: "logs/log.txt",
+                    fileSizeLimitBytes: 50 * 1024 * 1024,
+                    rollOnFileSizeLimit: true,
+                    retainedFileCountLimit: 5,
+                    outputTemplate:
+                    "[{Timestamp:dd-MM-yyyy HH:mm:ss.fff}] ({Level:u5}) {Message:lj}{NewLine}{Exception}");
+        }
+
+        Log.Logger = configuration.CreateLogger();
     }
 }
