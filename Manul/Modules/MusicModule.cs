@@ -160,7 +160,7 @@ public class MusicModule : ModuleBase<SocketCommandContext>
                 existingProcess.Dispose();
             }
 
-            var ffmpegCommand = $"-c \"youtube-dl -o - {query} | ffmpeg -loglevel panic -i pipe:0 -ac 2 -f s16le -ar 48000 pipe:1\"";
+            var ffmpegCommand = $"-c \"youtube-dl -o - '{query}' | ffmpeg -loglevel panic -i pipe:0 -ac 2 -f s16le -ar 48000 pipe:1\"";
             var ffmpegProcess = Process.Start(new ProcessStartInfo
             {
                 FileName = "/bin/bash",
